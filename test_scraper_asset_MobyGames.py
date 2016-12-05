@@ -6,20 +6,16 @@
 
 # --- Python standard library ---
 from __future__ import unicode_literals
-import sys, os
 
 # --- AEL modules ---
-if __name__ == "__main__" and __package__ is None:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from scrap import *
-from utils import *
-from assets import *
-
-# --- Print list of all scrapers currently in AEL ---
-print_scraper_list(scrapers_asset)
+from AEL.resources.scrap import *
+from AEL.resources.utils import *
 
 # --- main ----------------------------------------------------------------------------------------
-print('*** MobyGames search *********************************************')
+set_log_level(LOG_DEBUG) # >> LOG_INFO, LOG_VERB, LOG_DEBUG
+print_scraper_list(scrapers_asset)
+
+print('*** MobyGames search ***********************************************************************')
 MobyGames = asset_MobyGames()
 
 # results = MobyGames.get_search('Castlevania', '', 'Nintendo SNES')
@@ -33,7 +29,7 @@ results = MobyGames.get_search('Metroid', '', 'Nintendo SNES')
 print_games_search(results)
 
 # --- Print list of assets found ---
-print('*** MobyGames found images *********************************************')
+print('*** MobyGames found images *****************************************************************')
 # print_game_image_list(MobyGames, results, ASSET_TITLE)
 print_game_image_list(MobyGames, results, ASSET_SNAP)
 # print_game_image_list(MobyGames, results, ASSET_FANART)
