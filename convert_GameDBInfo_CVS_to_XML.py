@@ -31,69 +31,69 @@ import re
 
 # --- List of CVS files that will be converted ----------------------------------------------------
 file_list = [
-    ['Atari 2600',      'Atari 2600'],
-    ['Atari 5200',      'Atari 5200'],
-    ['Atari 7800',      'Atari 7800'],
-    ['Atari Jaguar',    'Atari Jaguar'],
-    ['Atari Jaguar CD', 'Atari Jaguar CD'],
-    ['Atari Lynx',      'Atari Lynx'],
-    ['Atari ST',        'Atari ST'],
+    ['Atari 2600',      'Atari 2600', 1],
+    ['Atari 5200',      'Atari 5200', 1],
+    ['Atari 7800',      'Atari 7800', 1],
+    ['Atari Jaguar',    'Atari Jaguar', 1],
+    ['Atari Jaguar CD', 'Atari Jaguar CD', 1],
+    ['Atari Lynx',      'Atari Lynx', 1],
+    ['Atari ST',        'Atari ST', 1],
 
-    ['Colecovision', 'Colecovision'],
+    ['Colecovision', 'Colecovision', 1],
 
-    ['Commodore 64',       'Commodore 64'],
-    ['commodore amiga',    'Commodore Amiga'],
-    ['Commodore 16 Plus4', 'Commodore Plus-4'],
-    ['Commodore VIC-20',   'Commodore VIC-20'],
+    ['Commodore 64',       'Commodore 64', 1],
+    ['commodore amiga',    'Commodore Amiga', 1],
+    ['Commodore 16 Plus4', 'Commodore Plus-4', 1],
+    ['Commodore VIC-20',   'Commodore VIC-20', 1],
     
-    ['Magnavox Odyssey 2', 'Magnavox Odyssey2'],
-    # ['Philips VG 5000', 'Philips Videopac+ G7000'],
+    ['Magnavox Odyssey 2', 'Magnavox Odyssey2', 1],
+    # ['Philips VG 5000', 'Philips Videopac+ G7000', 1],
 
-    # ['Microsoft MSX', 'Microsoft MSX'],
-    ['Microsoft MSX2', 'Microsoft MSX 2'],
-    ['Microsoft MS-DOS', 'Microsoft MS-DOS'],
-    # ['Microsoft Windows 3.x', 'Microsoft Windows'],
+    # ['Microsoft MSX', 'Microsoft MSX', 1],
+    ['Microsoft MSX2', 'Microsoft MSX 2', 1],
+    ['Microsoft MS-DOS', 'Microsoft MS-DOS', 1],
+    # ['Microsoft Windows 3.x', 'Microsoft Windows', 1],
 
-    ['NEC PC Engine', 'NEC PC Engine'],
-    ['NEC PC Engine-CD', 'NEC PC Engine CDROM2'],
-    ['NEC Turbo Graphx 16', 'NEC TurboGrafx 16'],
-    ['NEC TurboGrafx-CD', 'NEC TurboGrafx CD'],
-    ['NEC SuperGrafx', 'NEC SuperGrafx'],
-    ['NEC PC-FX', 'NEC PC-FX'],
+    ['NEC PC Engine', 'NEC PC Engine', 1],
+    ['NEC PC Engine-CD', 'NEC PC Engine CDROM2', 1],
+    ['NEC Turbo Graphx 16', 'NEC TurboGrafx 16', 1],
+    ['NEC TurboGrafx-CD', 'NEC TurboGrafx CD', 1],
+    ['NEC SuperGrafx', 'NEC SuperGrafx', 1],
+    ['NEC PC-FX', 'NEC PC-FX', 1],
 
-    ['Nintendo Game Boy', 'Nintendo GameBoy'],
-    ['Nintendo Game Boy Color', 'Nintendo GameBoy Color'],
-    ['Nintendo Game Boy Advance', 'Nintendo GameBoy Advance'],
-    ['Nintendo DS', 'Nintendo DS'],
-    ['Nintendo Famicom Disk System', 'Nintendo Famicom Disk System'],
-    ['Nintendo Entertainment System', 'Nintendo NES'],
-    ['Super Nintendo Entertainment System', 'Nintendo SNES'],
-    ['Nintendo Virtual Boy', 'Nintendo Virtual Boy'],
-    ['Nintendo 64', 'Nintendo 64'],
-    ['Nintendo GameCube', 'Nintendo GameCube'],
-    ['Nintendo Wii', 'Nintendo Wii'],
+    ['Nintendo Game Boy', 'Nintendo GameBoy', 1],
+    ['Nintendo Game Boy Color', 'Nintendo GameBoy Color', 1],
+    ['Nintendo Game Boy Advance', 'Nintendo GameBoy Advance', 1],
+    ['Nintendo DS', 'Nintendo DS', 1],
+    ['Nintendo Famicom Disk System', 'Nintendo Famicom Disk System', 1],
+    ['Nintendo Entertainment System', 'Nintendo NES', 1],
+    ['Super Nintendo Entertainment System', 'Nintendo SNES', 1],
+    ['Nintendo Virtual Boy', 'Nintendo Virtual Boy', 1],
+    ['Nintendo 64', 'Nintendo 64', 1],
+    ['Nintendo GameCube', 'Nintendo GameCube', 1],
+    ['Nintendo Wii', 'Nintendo Wii', 1],
 
-    ['Panasonic 3DO', 'Panasonic 3DO'],
+    ['Panasonic 3DO', 'Panasonic 3DO', 1],
 
-    ['Sega SG-1000', 'Sega SG-1000'],
-    ['Sega Master System', 'Sega Master System'],
-    ['Sega Game Gear', 'Sega Game Gear'],
-    ['Sega Genesis', 'Sega MegaDrive'],
-    ['Sega CD', 'Sega MegaCD'],
-    ['Sega 32x', 'Sega 32X'],
-    # ['Sega Pico', 'Sega PICO'],
-    ['Sega Saturn', 'Sega Saturn'],
-    ['Sega Dreamcast', 'Sega Dreamcast'],
+    ['Sega SG-1000', 'Sega SG-1000', 1],
+    ['Sega Master System', 'Sega Master System', 1],
+    ['Sega Game Gear', 'Sega Game Gear', 1],
+    ['Sega Genesis', 'Sega MegaDrive', 2],
+    ['Sega CD', 'Sega MegaCD', 1],
+    ['Sega 32x', 'Sega 32X', 1],
+    # ['Sega Pico', 'Sega PICO', 1],
+    ['Sega Saturn', 'Sega Saturn', 1],
+    ['Sega Dreamcast', 'Sega Dreamcast', 1],
 
-    ['Sinclair ZX Spectrum', 'Sinclair ZX Spectrum'],
+    ['Sinclair ZX Spectrum', 'Sinclair ZX Spectrum', 1],
     
-    ['SNK Neo Geo CD',           'SNK Neo-Geo CD'],
-    ['SNK Neo Geo Pocket',       'SNK Neo-Geo Pocket'],
-    ['SNK Neo Geo Pocket Color', 'SNK Neo-Geo Pocket Color'],
+    ['SNK Neo Geo CD',           'SNK Neo-Geo CD', 1],
+    ['SNK Neo Geo Pocket',       'SNK Neo-Geo Pocket', 1],
+    ['SNK Neo Geo Pocket Color', 'SNK Neo-Geo Pocket Color', 1],
 
-    ['Sony PlayStation',   'Sony PlayStation'],
-    ['Sony Playstation 2', 'Sony PlayStation 2'],
-    ['Sony PSP',           'Sony PlayStation Portable'],
+    ['Sony PlayStation',   'Sony PlayStation', 1],
+    ['Sony Playstation 2', 'Sony PlayStation 2', 1],
+    ['Sony PSP',           'Sony PlayStation Portable', 1],
 ]
 
 # >> AEL functions. Import AEL module!!!
@@ -121,9 +121,9 @@ def text_escape_XML(data_str):
 
     return data_str
 
-def XML_text(tag_name, tag_text):
+def XML_text(tag_name, tag_text, num_spaces = 4):
     tag_text = text_escape_XML(tag_text)
-    line = '  <{0}>{1}</{2}>\n'.format(tag_name, tag_text, tag_name)
+    line = '{0}<{1}>{2}</{3}>\n'.format(' ' * num_spaces, tag_name, tag_text, tag_name)
 
     return line
 
@@ -137,7 +137,7 @@ def text_str_2_Uni(str):
 # --- Main ----------------------------------------------------------------------------------------
 curr_dir   = os.getcwd()
 source_dir = curr_dir + '/data_gamedb_info/'
-dest_dir   = curr_dir + '/input_xml/'
+dest_dir   = curr_dir + '/data_gamedb_info_xml/'
 print('Current directory is     "{0}"'.format(curr_dir))
 print('Source directory is      "{0}"'.format(source_dir))
 print('Destination directory is "{0}"'.format(dest_dir))
@@ -147,8 +147,10 @@ print('Destination directory is "{0}"'.format(dest_dir))
 for files_tuple in file_list:
     csv_filename = os.path.join(source_dir, files_tuple[0] + '.csv')
     xml_filename = os.path.join(dest_dir, files_tuple[1] + '.xml')
+    parser_type  = files_tuple[2]
     print('Processing file "{0}"'.format(csv_filename))
     print('           into "{0}"'.format(xml_filename))
+    print('parser_type = {0}'.format(parser_type))
     # sys.exit(0)
 
     # >> Read CVS file
@@ -159,40 +161,63 @@ for files_tuple in file_list:
     str_list = []
     str_list.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
     str_list.append('<menu>\n')
-    str_list.append('<header>\n')
+    str_list.append('  <header>\n')
     str_list.append(XML_text('listname', files_tuple[1]))
-    str_list.append('  <lastlistupdate></lastlistupdate>\n')
-    str_list.append('  <listversion>test</listversion>\n')
-    str_list.append('  <exporterversion></exporterversion>\n')
-    str_list.append('</header>\n')
+    str_list.append('    <lastlistupdate></lastlistupdate>\n')
+    str_list.append('    <listversion>test</listversion>\n')
+    str_list.append('    <exporterversion></exporterversion>\n')
+    str_list.append('  </header>\n')
 
     # >> Write game info
     for cvs_line in cvs_text_list:
-        # --- 9 data fields ---
-        m = re.search('^([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)', cvs_line.strip())
-        if m:
-            # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
-            temp_str = text_str_2_Uni(m.group(1))
-            str_list.append('<game name="{0}">\n'.format(text_escape_XML(temp_str)))
-            str_list.append(XML_text('description',  text_str_2_Uni(m.group(2))))
-            str_list.append(XML_text('year',         text_str_2_Uni(m.group(3))))
-            str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4))))
-            str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
-            str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
-            str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
-            str_list.append(XML_text('score',        text_str_2_Uni(m.group(8))))
-            str_list.append(XML_text('player',       text_str_2_Uni(m.group(9))))
-            str_list.append(XML_text('story',        text_str_2_Uni(m.group(10))))
-            str_list.append(XML_text('enabled', 'Yes'))
-            str_list.append(XML_text('crc', ''))
-            str_list.append(XML_text('cloneof', ''))
-            str_list.append('</game>\n')
-        else:
+        if parser_type == 1:
+            # --- 10 data fields ---
+            m = re.search('^([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)', cvs_line.strip())
+            if m:
+                # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
+                temp_str = text_str_2_Uni(m.group(1))
+                str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
+                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2))))
+                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3))))
+                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4))))
+                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
+                str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
+                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
+                str_list.append(XML_text('score',        text_str_2_Uni(m.group(8))))
+                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9))))
+                str_list.append(XML_text('story',        text_str_2_Uni(m.group(10))))
+                str_list.append(XML_text('enabled', 'Yes'))
+                str_list.append(XML_text('crc', ''))
+                str_list.append(XML_text('cloneof', ''))
+                str_list.append('  </game>\n')
+                continue
+
+            # --- 9 data fields ---
+            m = re.search('^([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)', cvs_line.strip())
+            if m:
+                # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
+                temp_str = text_str_2_Uni(m.group(1))
+                str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
+                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2))))
+                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3))))
+                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4))))
+                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
+                str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
+                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
+                str_list.append(XML_text('score',        text_str_2_Uni(m.group(8))))
+                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9))))
+                str_list.append(XML_text('story',        ''))
+                str_list.append(XML_text('enabled', 'Yes'))
+                str_list.append(XML_text('crc', ''))
+                str_list.append(XML_text('cloneof', ''))
+                str_list.append('  </game>\n')
+                continue
+
             # --- 7 data fields ---
             m = re.search('^([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)', cvs_line.strip())
             if m:
                 temp_str = text_str_2_Uni(m.group(1))
-                str_list.append('<game name="{0}">\n'.format(text_escape_XML(temp_str)))
+                str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
                 str_list.append(XML_text('description',  text_str_2_Uni(m.group(2))))
                 str_list.append(XML_text('year',         text_str_2_Uni(m.group(3))))
                 str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4))))
@@ -205,11 +230,41 @@ for files_tuple in file_list:
                 str_list.append(XML_text('enabled', 'Yes'))
                 str_list.append(XML_text('crc', ''))
                 str_list.append(XML_text('cloneof', ''))
-                str_list.append('</game>\n')
-            else:
-                print('Error parsing CSV line')
-                print('"{0}"'.format(cvs_line.strip()))
-                sys.exit(0)
+                str_list.append('  </game>\n')
+                continue
+
+            print('Error parsing CSV line')
+            print('"{0}"'.format(cvs_line.strip()))
+            sys.exit(0)
+
+        elif parser_type == 2:
+            # --- 10 data fields ---
+            m = re.search('^([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)', cvs_line.strip())
+            if m:
+                # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
+                temp_str = text_str_2_Uni(m.group(1))
+                str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
+                str_list.append(XML_text('description',  text_str_2_Uni(m.group(4))))
+                str_list.append(XML_text('year',         text_str_2_Uni(m.group(2))))
+                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(3))))
+                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
+                str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
+                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
+                str_list.append(XML_text('score',        text_str_2_Uni(m.group(8))))
+                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9))))
+                str_list.append(XML_text('story',        text_str_2_Uni(m.group(10))))
+                str_list.append(XML_text('enabled', 'Yes'))
+                str_list.append(XML_text('crc', ''))
+                str_list.append(XML_text('cloneof', ''))
+                str_list.append('  </game>\n')
+                continue
+
+            print('Error parsing CSV line')
+            print('"{0}"'.format(cvs_line.strip()))
+            sys.exit(0)
+        else:
+            print('Unknown parser type = {0}'.format(parser_type))
+            sys.exit(0)
     str_list.append('</menu>\n')
 
     # >> Write XML file
