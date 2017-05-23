@@ -45,16 +45,38 @@ systems = {
     # 'jaguar' : {},
     # 'jaguarcd' : {},
     # 'lynx' : {},
-
-    # --- Coleco ---
+    # 'atarist' : {},
     
+    # --- Coleco ---
+    # 'coleco' : {},
+
+    # --- Commodore ---
+    # 'c64' : {},
+    # 'amiga' : {},
+    # 'plus4' : {},
+    # 'vic20' : {},
+
     # --- Magnavox ---
+    # 'odyssey2' : {},
 
     # --- Microsoft ---
-    
+    # 'msx' : {},
+    # 'msx2' : {},
+    # 'msdos' : {},
+    # 'windows' : {},
+    # 'xbox' : {},
+
     # --- NEC ---
-    
+    # 'pce' : {},
+    # 'pcecd' : {},
+    # 'supergrafx' : {},
+    # 'pcfx' : {},
+
     # --- Nintendo ---
+    # 'gb' : {},
+    # 'gbc' : {},
+    # 'gba' : {},
+    # 'ds' : {},
     # 'fds' : {},
     # 'nes' : {},
     'snes' : {
@@ -63,9 +85,9 @@ systems = {
         'hyperlist' : '',
         'output'    : 'output_xml/Nintendo SNES.xml'
     },
-    # 'vb' : {},
+    # 'virtualboy' : {},
     # 'n64' : {},
-    # 'gc' : {},
+    # 'gamecube' : {},
     # 'wii' : {},
 
     # --- SEGA ---
@@ -90,7 +112,9 @@ systems = {
     # 'dreamcast' : {},
 
     # --- SNK ---
-    
+    # 'neocd' : {},
+    # 'ngp' : {},
+    # 'ngpc' : {},
 
     # --- SONY ---
     'psx' : {
@@ -99,6 +123,7 @@ systems = {
         'hyperlist' : '',
         'output'    : 'output_xml/Sony PlayStation.xml'
     }
+    # 'psx2' : {},
     # 'psp' : {},
 }
 
@@ -360,5 +385,6 @@ def process_system(system):
 
 # --- Main ----------------------------------------------------------------------------------------
 set_log_level(LOG_DEBUG)
-for system_name in systems: process_system(systems[system_name])
 # process_system(systems['a2600'])
+# process_system(systems['32x'])
+for system_name in systems: process_system(systems[system_name])
