@@ -188,6 +188,9 @@ for files_tuple in file_list:
         elif parser_type == 2:
             # --- 10 data fields ---
             m = re.search('^([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)>([^>]*)', cvs_line.strip())
+            # >> https://docs.python.org/2/library/stdtypes.html#str.split
+            genre_raw_str = text_str_2_Uni(m.group(7))
+            genre_str = genre_raw_str.split('|')[0]
             if m:
                 # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
                 temp_str = text_str_2_Uni(m.group(1))
@@ -196,7 +199,7 @@ for files_tuple in file_list:
                 str_list.append(XML_text('year',         text_str_2_Uni(m.group(2)), 4))
                 str_list.append(XML_text('rating',       text_str_2_Uni(m.group(3)), 4))
                 str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5)), 4))
-                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7)), 4))
+                str_list.append(XML_text('genre',        genre_str, 4))
                 str_list.append(XML_text('player',       text_str_2_Uni(m.group(9)), 4))
                 str_list.append(XML_text('story',        text_str_2_Uni(m.group(10)), 4))
                 str_list.append('  </game>\n')
