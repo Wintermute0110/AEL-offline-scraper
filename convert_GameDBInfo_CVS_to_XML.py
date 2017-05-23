@@ -28,6 +28,8 @@ import glob
 import re
 
 # --- Import AEL modules ---
+from AEL.resources.utils import *
+from AEL.resources.rom_audit import *
 
 # --- List of CVS files that will be converted ----------------------------------------------------
 file_list = [
@@ -96,44 +98,6 @@ file_list = [
     ['Sony PSP',           'Sony PlayStation Portable', 1],
 ]
 
-# >> AEL functions. Import AEL module!!!
-# Some XML encoding of special characters:
-#   {'\n': '&#10;', '\r': '&#13;', '\t':'&#9;'}
-#
-# See http://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
-# See https://wiki.python.org/moin/EscapingXml
-# See https://github.com/python/cpython/blob/master/Lib/xml/sax/saxutils.py
-# See http://stackoverflow.com/questions/2265966/xml-carriage-return-encoding
-#
-def text_escape_XML(data_str):
-    # Ampersand MUST BE replaced FIRST
-    data_str = data_str.replace('&', '&amp;')
-    data_str = data_str.replace('>', '&gt;')
-    data_str = data_str.replace('<', '&lt;')
-
-    data_str = data_str.replace("'", '&apos;')
-    data_str = data_str.replace('"', '&quot;')
-    
-    # --- Unprintable characters ---
-    data_str = data_str.replace('\n', '&#10;')
-    data_str = data_str.replace('\r', '&#13;')
-    data_str = data_str.replace('\t', '&#9;')
-
-    return data_str
-
-def XML_text(tag_name, tag_text, num_spaces = 4):
-    tag_text = text_escape_XML(tag_text)
-    line = '{0}<{1}>{2}</{3}>\n'.format(' ' * num_spaces, tag_name, tag_text, tag_name)
-
-    return line
-
-def text_str_2_Uni(str):
-    unicode_str = str.decode('ascii', errors = 'replace')
-    # print(type(str))
-    # print(type(unicode_str))
-
-    return unicode_str
-
 # --- Main ----------------------------------------------------------------------------------------
 curr_dir   = os.getcwd()
 source_dir = curr_dir + '/data_gamedb_info/'
@@ -150,8 +114,7 @@ for files_tuple in file_list:
     parser_type  = files_tuple[2]
     print('Processing file "{0}"'.format(csv_filename))
     print('           into "{0}"'.format(xml_filename))
-    print('parser_type = {0}'.format(parser_type))
-    # sys.exit(0)
+    print('parser_type {0}'.format(parser_type))
 
     # >> Read CVS file
     with open(csv_filename, 'r') as content_file:
@@ -177,18 +140,13 @@ for files_tuple in file_list:
                 # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
                 temp_str = text_str_2_Uni(m.group(1))
                 str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
-                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2))))
-                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3))))
-                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4))))
-                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
-                str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
-                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
-                str_list.append(XML_text('score',        text_str_2_Uni(m.group(8))))
-                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9))))
-                str_list.append(XML_text('story',        text_str_2_Uni(m.group(10))))
-                str_list.append(XML_text('enabled', 'Yes'))
-                str_list.append(XML_text('crc', ''))
-                str_list.append(XML_text('cloneof', ''))
+                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2)), 4))
+                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3)), 4))
+                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4)), 4))
+                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5)), 4))
+                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7)), 4))
+                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9)), 4))
+                str_list.append(XML_text('story',        text_str_2_Uni(m.group(10)), 4))
                 str_list.append('  </game>\n')
                 continue
 
@@ -198,18 +156,13 @@ for files_tuple in file_list:
                 # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
                 temp_str = text_str_2_Uni(m.group(1))
                 str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
-                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2))))
-                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3))))
-                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4))))
-                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
-                str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
-                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
-                str_list.append(XML_text('score',        text_str_2_Uni(m.group(8))))
-                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9))))
-                str_list.append(XML_text('story',        ''))
-                str_list.append(XML_text('enabled', 'Yes'))
-                str_list.append(XML_text('crc', ''))
-                str_list.append(XML_text('cloneof', ''))
+                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2)), 4))
+                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3)), 4))
+                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4)), 4))
+                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5)), 4))
+                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7)), 4))
+                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9)), 4))
+                str_list.append(XML_text('story', '', 4))
                 str_list.append('  </game>\n')
                 continue
 
@@ -218,18 +171,13 @@ for files_tuple in file_list:
             if m:
                 temp_str = text_str_2_Uni(m.group(1))
                 str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
-                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2))))
-                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3))))
-                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4))))
-                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
-                str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
-                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
-                str_list.append(XML_text('score', ''))
-                str_list.append(XML_text('player', ''))
-                str_list.append(XML_text('story', ''))
-                str_list.append(XML_text('enabled', 'Yes'))
-                str_list.append(XML_text('crc', ''))
-                str_list.append(XML_text('cloneof', ''))
+                str_list.append(XML_text('description',  text_str_2_Uni(m.group(2)), 4))
+                str_list.append(XML_text('year',         text_str_2_Uni(m.group(3)), 4))
+                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(4)), 4))
+                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5)), 4))
+                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7)), 4))
+                str_list.append(XML_text('player', '', 4))
+                str_list.append(XML_text('story', '', 4))
                 str_list.append('  </game>\n')
                 continue
 
@@ -244,18 +192,13 @@ for files_tuple in file_list:
                 # print('Adding game "{0}"'.format(text_str_2_Uni(m.group(1))))
                 temp_str = text_str_2_Uni(m.group(1))
                 str_list.append('  <game name="{0}">\n'.format(text_escape_XML(temp_str)))
-                str_list.append(XML_text('description',  text_str_2_Uni(m.group(4))))
-                str_list.append(XML_text('year',         text_str_2_Uni(m.group(2))))
-                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(3))))
-                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5))))
-                str_list.append(XML_text('dev',          text_str_2_Uni(m.group(6))))
-                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7))))
-                str_list.append(XML_text('score',        text_str_2_Uni(m.group(8))))
-                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9))))
-                str_list.append(XML_text('story',        text_str_2_Uni(m.group(10))))
-                str_list.append(XML_text('enabled', 'Yes'))
-                str_list.append(XML_text('crc', ''))
-                str_list.append(XML_text('cloneof', ''))
+                str_list.append(XML_text('description',  text_str_2_Uni(m.group(4)), 4))
+                str_list.append(XML_text('year',         text_str_2_Uni(m.group(2)), 4))
+                str_list.append(XML_text('rating',       text_str_2_Uni(m.group(3)), 4))
+                str_list.append(XML_text('manufacturer', text_str_2_Uni(m.group(5)), 4))
+                str_list.append(XML_text('genre',        text_str_2_Uni(m.group(7)), 4))
+                str_list.append(XML_text('player',       text_str_2_Uni(m.group(9)), 4))
+                str_list.append(XML_text('story',        text_str_2_Uni(m.group(10)), 4))
                 str_list.append('  </game>\n')
                 continue
 

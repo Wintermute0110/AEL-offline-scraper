@@ -20,52 +20,8 @@ from __future__ import unicode_literals
 # import sys, os
 
 # --- Import AEL modules ---
-# >> rom_audit also imports utils and utils_kodi
+from AEL.resources.utils import *
 from AEL.resources.rom_audit import *
-
-# >> AEL functions. Import AEL module!!!
-# Some XML encoding of special characters:
-#   {'\n': '&#10;', '\r': '&#13;', '\t':'&#9;'}
-#
-# See http://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
-# See https://wiki.python.org/moin/EscapingXml
-# See https://github.com/python/cpython/blob/master/Lib/xml/sax/saxutils.py
-# See http://stackoverflow.com/questions/2265966/xml-carriage-return-encoding
-#
-def text_escape_XML(data_str):
-    # Ampersand MUST BE replaced FIRST
-    data_str = data_str.replace('&', '&amp;')
-    data_str = data_str.replace('>', '&gt;')
-    data_str = data_str.replace('<', '&lt;')
-
-    data_str = data_str.replace("'", '&apos;')
-    data_str = data_str.replace('"', '&quot;')
-    
-    # --- Unprintable characters ---
-    data_str = data_str.replace('\n', '&#10;')
-    data_str = data_str.replace('\r', '&#13;')
-    data_str = data_str.replace('\t', '&#9;')
-
-    return data_str
-
-def XML_text(tag_name, tag_text, num_spaces = 4):
-    tag_text = text_escape_XML(tag_text)
-    line = '{0}<{1}>{2}</{3}>\n'.format(' ' * num_spaces, tag_name, tag_text, tag_name)
-
-    return line
-
-def text_str_2_Uni(string):
-    # print(type(string))
-    if type(string).__name__ == 'unicode':
-        unicode_str = string
-    elif type(string).__name__ == 'str':
-        unicode_str = string.decode('ascii', errors = 'replace')
-    else:
-        print('TypeError: ' + type(string).__name__)
-        raise TypeError
-    # print(type(unicode_str))
-
-    return unicode_str
 
 # --- Data structures -----------------------------------------------------------------------------
 systems = {
