@@ -33,6 +33,8 @@ from AEL.resources.rom_audit import *
 
 # --- List of CVS files that will be converted ----------------------------------------------------
 file_list = [
+    ['Amstrad CPC', 'Amstrad CPC', 1],
+
     ['Atari 2600',      'Atari 2600', 1],
     ['Atari 5200',      'Atari 5200', 1],
     ['Atari 7800',      'Atari 7800', 1],
