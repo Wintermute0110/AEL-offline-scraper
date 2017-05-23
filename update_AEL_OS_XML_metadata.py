@@ -25,45 +25,86 @@ from AEL.resources.rom_audit import *
 
 # --- Data structures -----------------------------------------------------------------------------
 systems = {
-    # --- Nintendo ---
-    'snes' : {
-        'nointro'   : 'data_nointro/Nintendo - Super Nintendo Entertainment System Parent-Clone (20170507-052522).dat',
-        'gamedb'    : 'data_gamedb_info_xml/Sega 32X.xml',
-        'tempest'   : '',
-        'hyperlist' : '',
-        'output'    : 'output_xml/Sega 32X.xml'
+    # --- Amstrad ---
+    'cpc' : {
+        'nointro'   : '',
+        'gamedb'    : 'data_gamedb_info_xml/Amstrad CPC.xml',
+        'hyperlist' : 'data_hyperlist/Amstrad CPC.xml',
+        'output'    : 'output_xml/Amstrad CPC.xml'
     },
 
-    # --- SEGA ---
-    '32x' : {
-        'nointro'   : 'data_nointro/Sega - 32X Parent-Clone (20161022-095033).dat',
-        'gamedb'    : 'data_gamedb_info_xml/Sega 32X.xml',
-        'tempest'   : '',
+    # --- Atari ---
+    'a2600' : {
+        'nointro'   : 'data_nointro/Atari - 2600 (20170123-074806).dat',
+        'gamedb'    : 'data_gamedb_info_xml/Atari 2600.xml',
         'hyperlist' : '',
-        'output'    : 'output_xml/Sega 32X.xml'
+        'output'    : 'output_xml/Atari 2600.xml'
     },
+    # 'a5200' : {},
+    # 'a7800' : {},
+    # 'jaguar' : {},
+    # 'jaguarcd' : {},
+    # 'lynx' : {},
+
+    # --- Coleco ---
+    
+    # --- Magnavox ---
+
+    # --- Microsoft ---
+    
+    # --- NEC ---
+    
+    # --- Nintendo ---
+    # 'fds' : {},
+    # 'nes' : {},
+    'snes' : {
+        'nointro'   : 'data_nointro/Nintendo - Super Nintendo Entertainment System Parent-Clone (20170507-052522).dat',
+        'gamedb'    : 'data_gamedb_info_xml/Nintendo SNES.xml',
+        'hyperlist' : '',
+        'output'    : 'output_xml/Nintendo SNES.xml'
+    },
+    # 'vb' : {},
+    # 'n64' : {},
+    # 'gc' : {},
+    # 'wii' : {},
+
+    # --- SEGA ---
+    # 'sg1000' : {},
+    # 'sms' : {},
+    # 'gg' : {},
     'genesis' : {
         'nointro'   : 'data_nointro/Sega - Mega Drive - Genesis Parent-Clone (20170318-044444).dat',
         'gamedb'    : 'data_gamedb_info_xml/Sega MegaDrive.xml',
-        'tempest'   : 'data_tempest_ini/Genesis.ini',
         'hyperlist' : 'data_hyperlist/Sega Genesis.xml',
         'output'    : 'output_xml/Sega MegaDrive.xml'
     },
+    # 'megacd' : {},
+    '32x' : {
+        'nointro'   : 'data_nointro/Sega - 32X Parent-Clone (20161022-095033).dat',
+        'gamedb'    : 'data_gamedb_info_xml/Sega 32X.xml',
+        'hyperlist' : '',
+        'output'    : 'output_xml/Sega 32X.xml'
+    },
+    # 'pico' : {},
+    # 'saturn' : {},
+    # 'dreamcast' : {},
+
+    # --- SNK ---
+    
 
     # --- SONY ---
     'psx' : {
         'nointro'   : 'data_redump/Sony - PlayStation (20170306 02-03-12).dat',
         'gamedb'    : 'data_gamedb_info_xml/Sony PlayStation.xml',
-        'tempest'   : 'data_tempest_ini/PlayStation.ini',
         'hyperlist' : '',
         'output'    : 'output_xml/Sony PlayStation.xml'
     }
+    # 'psp' : {},
 }
 
 def process_system(system):
     nointro_FN   = FileName('./' + system['nointro'])
     gamedb_FN    = FileName('./' + system['gamedb'])
-    tempest_FN   = FileName('./' + system['tempest'])
     hyperlist_FN = FileName('./' + system['hyperlist'])
     output_FN    = FileName('./' + system['output'])
 
@@ -73,9 +114,6 @@ def process_system(system):
     # --- Load GameDBInfo XML ---
     gamedb_dic = audit_load_GameDB_XML(gamedb_FN)
 
-    # --- Load Tempest INI ---
-    # tempest_dic = audit_load_Tempest_INI(tempest_FN)
-
     # --- Load HyperList XML ---
     hyperlist_dic = audit_load_HyperList_XML(hyperlist_FN)
 
@@ -84,8 +122,8 @@ def process_system(system):
     override_dic = {}
 
     # --- Make PClone dictionary ---
-    # >> pclone_dic = { 'Parent_name' : ['Clone 1', 'Clone 2', ...], ... }
-    # >> parents_dic = { 'clone_name' : 'parent_name', ...}
+    # pclone_dic = { 'parent_name' : ['clone_1', 'clone_2', ...], ... }
+    # parents_dic = { 'clone_name' : 'parent_name', ...}
     pclone_dic = audit_make_NoIntro_PClone_dic(nointro_dic)
     parents_dic = audit_make_NoIntro_Parents_dic(nointro_dic)
 
@@ -122,7 +160,7 @@ def process_system(system):
     line_3 = "   {0} | {1} | {2} | {3} | {4} | {5} | {6} |"
     line_4 = "   {0} | {1} | {2} | {3} | {4} | {5} | {6} |"
     for rom_key in sorted(main_rom_set):
-        if re.findall(r'^\[BIOS\]', rom_key): continue
+        # if re.findall(r'^\[BIOS\]', rom_key): continue
 
         rom_name = text_limit_string(rom_key, NAME_LENGTH)
         dat_str = 'Yes' if rom_key in nointro_dic else 'No'
@@ -261,8 +299,8 @@ def process_system(system):
         else:
             metadata['cloneof'] = ''
         metadata['source'] = 'ERROR'
-        if   rom_key in nointro_dic: metadata['source'] = 'No-Intro DAT'
-        elif rom_key in gamedb_dic:  metadata['source'] = 'GameDB'
+        if   rom_key in nointro_dic: metadata['source'] = 'No-Intro/Redump DAT'
+        elif rom_key in gamedb_dic:  metadata['source'] = 'GameDBInfo'
         metadata['status'] = metadata_status
         metadata_dic[rom_key] = metadata
 
@@ -285,9 +323,10 @@ def process_system(system):
     str_list.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
     str_list.append('<menu>\n')
     str_list.append('  <header>\n')
-    str_list.append(XML_text('listname', 'genesis'))
+    str_list.append(XML_text('listname', output_FN.getBase_noext(), 4))
+    str_list.append(XML_text('DAT', nointro_FN.getBase(), 4))
     str_list.append('    <lastlistupdate></lastlistupdate>\n')
-    str_list.append('    <listversion>test</listversion>\n')
+    str_list.append('    <listversion></listversion>\n')
     str_list.append('    <exporterversion></exporterversion>\n')
     str_list.append('  </header>\n')
     for rom_key in sorted(metadata_dic):
@@ -316,11 +355,10 @@ def process_system(system):
     print('***** Statistics *****')
     print('NoIntro roms          {0}'.format(len(nointro_dic)))
     print('GameDB roms           {0}'.format(len(gamedb_dic)))
-    # print('Tempest roms          {0}'.format(len(tempest_dic)))
     print('HyperList roms        {0}'.format(len(hyperlist_dic)))
     print('Offline scrapers roms {0}'.format(len(metadata_dic)))
 
 # --- Main ----------------------------------------------------------------------------------------
 set_log_level(LOG_DEBUG)
 for system_name in systems: process_system(systems[system_name])
-#  process_system(systems['32x'])
+# process_system(systems['a2600'])
