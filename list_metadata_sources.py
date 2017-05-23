@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # List metadata from a NoIntro DAT and several other sources.
+# This file is similar to update_AEL_OS_XML_metadata.py but does not output the final XML.
+# This file includes more metadata sources than update_AEL_OS_XML_metadata.py
 #
 
 # Copyright (c) 2017 Wintermute0110 <wintermute0110@gmail.com>
@@ -164,161 +166,12 @@ def process_system(system):
                             hl_studio_srt.ljust(PUBLISHER_LENGTH), hl_nplayers_srt.ljust(NPLAYERS_LENGTH),
                             hl_rating_srt.ljust(ESRB_LENGTH), hl_plot_srt.ljust(PLOT_LENGTH) ))
 
-        # --- Build metadata dictionary ---
-        metadata = audit_new_rom_AEL_Offline()
-        metadata_status = 'ERROR!'
-        # >> Overrides always have priority
-        if rom_key in override_dic:
-            metadata_status = 'Own XML Override'
-        elif rom_key in gamedb_dic:
-            metadata_status = 'Own GameDBInfo'
-            metadata['year']         = gamedb_dic[rom_key]['year']
-            metadata['genre']        = gamedb_dic[rom_key]['genre']
-            metadata['manufacturer'] = gamedb_dic[rom_key]['manufacturer']
-            metadata['nplayers']     = gamedb_dic[rom_key]['player']
-            metadata['rating']       = gamedb_dic[rom_key]['rating']
-            metadata['plot']         = gamedb_dic[rom_key]['story']
-        elif rom_key in hyperlist_dic:
-            metadata_status = 'Own HyperList'
-        else:
-            # >> If ROM is a parent search among the clones
-            if rom_key in pclone_dic:
-                # log_info('Parent ROM')
-                metadata_found_in_clones = False
-                for clone_key in pclone_dic[rom_key]:
-                    if clone_key in override_dic:
-                        metadata_status = 'Clone XML Override'
-                        metadata_found_in_clones = True
-                        break
-                    elif clone_key in gamedb_dic:
-                        metadata_status = 'Clone GameDBInfo'
-                        metadata['year']         = gamedb_dic[clone_key]['year']
-                        metadata['genre']        = gamedb_dic[clone_key]['genre']
-                        metadata['manufacturer'] = gamedb_dic[clone_key]['manufacturer']
-                        metadata['nplayers']     = gamedb_dic[clone_key]['player']
-                        metadata['rating']       = gamedb_dic[clone_key]['rating']
-                        metadata['plot']         = gamedb_dic[clone_key]['story']
-                        metadata_found_in_clones = True
-                        break
-                    elif clone_key in hyperlist_dic:
-                        metadata_status = 'Clone HyperList'
-                        metadata_found_in_clones = True
-                        break
-                # >> ROM is a parent and metadata not found in clones -> No metadata available
-                if not metadata_found_in_clones:
-                    metadata_status = 'Not available (No-Intro Parent)'
-
-            # >> ROM is a clone
-            elif rom_key in parents_dic:
-                # log_info('Clone ROM')
-                # >> First search parent
-                parent_key = parents_dic[rom_key]
-                if parent_key in override_dic:
-                    metadata_status = 'Parent XML Override'
-                    metadata_found_in_parent = True
-                elif parent_key in gamedb_dic:
-                    metadata_status = 'Parent GameDBInfo'
-                    metadata['year']         = gamedb_dic[parent_key]['year']
-                    metadata['genre']        = gamedb_dic[parent_key]['genre']
-                    metadata['manufacturer'] = gamedb_dic[parent_key]['manufacturer']
-                    metadata['nplayers']     = gamedb_dic[parent_key]['player']
-                    metadata['rating']       = gamedb_dic[parent_key]['rating']
-                    metadata['plot']         = gamedb_dic[parent_key]['story']
-                elif parent_key in hyperlist_dic:
-                    metadata_status = 'Parent HyperList'
-                else:
-                    # >> Metadata not found in parent
-                    # >> Search list of clones
-                    metadata_found_in_clones = False
-                    for clone_key in pclone_dic[parent_key]:
-                        if clone_key in override_dic:
-                            metadata_status = 'Clone XML Override'
-                            metadata_found_in_clones = True
-                            break
-                        elif clone_key in gamedb_dic:
-                            metadata_status = 'Clone GameDBInfo'
-                            metadata['year']  = gamedb_dic[clone_key]['year']
-                            metadata['genre'] = gamedb_dic[clone_key]['genre']
-                            metadata['manufacturer'] = gamedb_dic[clone_key]['manufacturer']
-                            metadata['nplayers']     = gamedb_dic[clone_key]['player']
-                            metadata['rating']       = gamedb_dic[clone_key]['rating']
-                            metadata['plot']         = gamedb_dic[clone_key]['story']
-                            metadata_found_in_clones = True
-                            break
-                        elif clone_key in hyperlist_dic:
-                            metadata_status = 'Clone HyperList'
-                            metadata_found_in_clones = True
-                            break
-                    # >> ROM is a parent and metadata not found in clones -> No metadata available
-                    if not metadata_found_in_clones:
-                        metadata_status = 'Not available (No-Intro Clone)'
-
-        # >> Final metadata
-        metadata['name'] = rom_key
-        metadata['description'] = rom_key
-        if rom_name in nointro_dic:
-            metadata['cloneof'] = parents_dic[rom_key] if nointro_dic[rom_key]['cloneof'] else ''
-        else:
-            metadata['cloneof'] = ''
-        metadata['source'] = 'ERROR'
-        if   rom_key in nointro_dic: metadata['source'] = 'No-Intro DAT'
-        elif rom_key in gamedb_dic:  metadata['source'] = 'GameDB'
-        metadata['status'] = metadata_status
-        metadata_dic[rom_key] = metadata
-
-        # >> Print
-        m_year_srt         = text_limit_string(metadata['year'], YEAR_LENGTH)
-        m_genre_srt        = text_limit_string(metadata['genre'], GENRE_LENGTH)
-        m_manufacturer_srt = text_limit_string(metadata['manufacturer'], PUBLISHER_LENGTH)
-        m_nplayers_srt     = text_limit_string(metadata['nplayers'], NPLAYERS_LENGTH)
-        m_rating_srt       = text_limit_string(metadata['rating'], ESRB_LENGTH)
-        m_plot_srt         = text_limit_string(metadata['plot'], PLOT_LENGTH)
-
-        print(line_4.format(metadata_status.ljust(DB_LENGTH),
-                            m_year_srt.ljust(YEAR_LENGTH), m_genre_srt.ljust(GENRE_LENGTH),
-                            m_manufacturer_srt.ljust(PUBLISHER_LENGTH), m_nplayers_srt.ljust(NPLAYERS_LENGTH),
-                            m_rating_srt.ljust(ESRB_LENGTH), m_plot_srt.ljust(PLOT_LENGTH) ))
-
-    # --- Save Offline scraper XML ---
-    # >> Create XML data
-    str_list = []
-    str_list.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
-    str_list.append('<menu>\n')
-    str_list.append('  <header>\n')
-    str_list.append(XML_text('listname', 'genesis'))
-    str_list.append('    <lastlistupdate></lastlistupdate>\n')
-    str_list.append('    <listversion>test</listversion>\n')
-    str_list.append('    <exporterversion></exporterversion>\n')
-    str_list.append('  </header>\n')
-    for rom_key in sorted(metadata_dic):
-        # print(metadata_dic[rom_key])
-        str_list.append('  <game name="{0}">\n'.format(text_escape_XML(rom_key)))
-        str_list.append(XML_text('description',  text_str_2_Uni(metadata_dic[rom_key]['description']), 4))
-        str_list.append(XML_text('cloneof',      text_str_2_Uni(metadata_dic[rom_key]['cloneof']), 4))
-        str_list.append(XML_text('source',       text_str_2_Uni(metadata_dic[rom_key]['source']), 4))
-        str_list.append(XML_text('status',       text_str_2_Uni(metadata_dic[rom_key]['status']), 4))
-        str_list.append(XML_text('year',         text_str_2_Uni(metadata_dic[rom_key]['year']), 4))
-        str_list.append(XML_text('genre',        text_str_2_Uni(metadata_dic[rom_key]['genre']), 4))
-        str_list.append(XML_text('manufacturer', text_str_2_Uni(metadata_dic[rom_key]['manufacturer']), 4))
-        str_list.append(XML_text('nplayers',     text_str_2_Uni(metadata_dic[rom_key]['nplayers']), 4))
-        str_list.append(XML_text('rating',       text_str_2_Uni(metadata_dic[rom_key]['rating']), 4))
-        str_list.append(XML_text('plot',         text_str_2_Uni(metadata_dic[rom_key]['plot']), 4))
-        str_list.append('  </game>\n')
-    str_list.append('</menu>\n')
-
-    # >> Write XML file
-    full_string = ''.join(str_list).encode('utf-8')
-    file_obj = open(output_FN.getPath(), 'w')
-    file_obj.write(full_string)
-    file_obj.close()
-
     # --- Statistics ---
     print('***** Statistics *****')
     print('NoIntro roms          {0}'.format(len(nointro_dic)))
     print('GameDB roms           {0}'.format(len(gamedb_dic)))
     # print('Tempest roms          {0}'.format(len(tempest_dic)))
     print('HyperList roms        {0}'.format(len(hyperlist_dic)))
-    print('Offline scrapers roms {0}'.format(len(metadata_dic)))
 
 # --- Main ----------------------------------------------------------------------------------------
 set_log_level(LOG_DEBUG)
