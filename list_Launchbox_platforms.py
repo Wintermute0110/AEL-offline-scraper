@@ -20,6 +20,15 @@ import copy
 from AEL.resources.utils import *
 from AEL.resources.rom_audit import *
 
+# --- Functions -----------------------------------------------------------------------------------
+def count_games(platform, games_dic):
+    num_games = 0
+    for game_key in games_dic:
+        if games_dic[game_key]['Platform'] == platform:
+            num_games += 1
+
+    return num_games
+
 # --- Main ----------------------------------------------------------------------------------------
 set_log_level(LOG_DEBUG)
 LB_metadata_FN = FileName('./data_launchbox/Metadata.xml')
@@ -29,7 +38,13 @@ games_dic = {}
 platforms_dic = {}
 gameimages_dic = {}
 audit_load_LB_metadata_XML(LB_metadata_FN, games_dic, platforms_dic, gameimages_dic)
+# print("Games       {0}".format(len(games_dic)))
+# print("Platforms   {0}".format(len(platforms_dic)))
+# print("Game images {0}".format(len(gameimages_dic)))
 
 # --- List platforms ---
 for p_name in sorted(platforms_dic):
-    print("Platform '{0}'".format(p_name))
+    # >> Count games in platform
+    num_games = count_games(p_name, games_dic)
+    print("Platform {0:>38} has {1:5d} games".format(p_name, num_games).encode('utf-8'))
+sys.exit(0)
