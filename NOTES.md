@@ -2,6 +2,11 @@
 
  * Nothing at the moment.
 
+# Launchbox database #
+ 
+See https://bitbucket.org/jasondavidcarr/launchbox/issues/902/api-access-to-launchbox
+The database ZIP file is updated daily.
+Download it from http://gamesdb.launchbox-app.com/Metadata.zip
  
 # Include Python modules #
 
