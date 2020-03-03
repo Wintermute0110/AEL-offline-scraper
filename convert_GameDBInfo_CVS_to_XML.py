@@ -101,11 +101,11 @@ file_list = [
 
 # --- Main ----------------------------------------------------------------------------------------
 curr_dir   = os.getcwd()
-source_dir = curr_dir + '/data_gamedb_info/'
+source_dir = curr_dir + '/data_gamedb_info_csv/'
 dest_dir   = curr_dir + '/data_gamedb_info_xml/'
-print('Current directory is     "{0}"'.format(curr_dir))
-print('Source directory is      "{0}"'.format(source_dir))
-print('Destination directory is "{0}"'.format(dest_dir))
+print('Current directory is     "{}"'.format(curr_dir))
+print('Source directory is      "{}"'.format(source_dir))
+print('Destination directory is "{}"'.format(dest_dir))
 
 # --- Traverse list of CVS files ---
 # file_list = glob.glob(source_dir + '*.csv')
