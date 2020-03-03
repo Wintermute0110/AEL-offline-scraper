@@ -1,0 +1,7 @@
+# Python stuff
+*.pyo
+*.pyc
+
+# Misc files
+*.html
+*.kate-swp
