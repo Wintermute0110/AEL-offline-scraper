@@ -1,14 +1,18 @@
-# TODO #
+## TODO
 
  * Nothing at the moment.
 
-# Launchbox database #
+## Launchbox database
  
-See https://bitbucket.org/jasondavidcarr/launchbox/issues/902/api-access-to-launchbox
-The database ZIP file is updated daily.
-Download it from http://gamesdb.launchbox-app.com/Metadata.zip
- 
-# Include Python modules #
+See [LaunchBox API access](https://bitbucket.org/jasondavidcarr/launchbox/issues/902/api-access-to-launchbox)
+
+The LaunchBox database ZIP file is updated daily. Download it from
+[LaunchBox metadata ZIP file](http://gamesdb.launchbox-app.com/Metadata.zip).
+
+Do not use the LaunchBox database to build an offline scraper for now. I think it is better to have
+one good offline scraper than several options.
+
+## Include Python modules
 
 To include an arbitrary directory in Python the directory must be added to the Python search path.
 

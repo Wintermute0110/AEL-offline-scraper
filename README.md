@@ -1,10 +1,47 @@
-## Advanced Emulator Launcher offline database and scraper ##
+## Advanced Emulator Launcher offline database and scraper
 
-This repository includes the offline ROM metadata dabase of AEL's offline scraper.
+This repository includes the offline ROM metadata dabase of AEL Offline Scraper (AOS). It also
+includes a set of tools for online scraper development.
 
-It also includes a set of tools for online scraper development.
+## Generate Offline Scraper XML files (V1 old method)
 
-### No-Intro/Redump ROMsets metadata report (Cartridge systems) ###
+The first version of the AOS uses XML files to store information. The CSV files from
+the GameDBInfo database, stored in `data_gamedb_info`, are converted to XML and stored 
+in `data_gamedb_info_xml`. The MAME XML is generated from the output of `mame -listxml`
+combined with `catver.ini`.
+
+### Updating AOS XML files
+
+ 1. Use `v1_convert_GameDBInfo_CVS_to_AOS_XML.py` to convert the GameDBInfo CSV files into XML.
+
+ 2. Use `v1_convert_MAME_XML_to_AOS_XML.py` to convert `MAME_raw.xml` and `catver.ini` into
+    `MAME.xml`.
+
+ 3. Copy XML files from `aaa` into `bbb`.
+
+ 3. Update AOS index file so AEL can display the AOS contents.
+
+## Generate Offline Scraper XML files (V2 current method)
+
+Same as V1 **BUT** use JSON instead of XML. This will increase the loading speed of the
+AOS databases a lot.
+
+## Generate Offline Scraper JSON files (V3 new method)
+
+ * The second version of the AOS uses JSON to store information.
+
+ * The database combines XML files with metadata from GameDBInfo (and maybe other
+   sources like Tempest INI files) with No-Intro/Redump/Libretro DAT files.
+
+ * The database includes parent/clone, region and language information.
+
+ * The database includes CRC/MD5/SHA1 for ROM audit on selected platforms.
+
+Version 2 of the AOS is still in develpment and some design decisions still to be made.
+
+## Notes
+
+### No-Intro/Redump ROMsets metadata report (Cartridge systems)
 
 ```
 rom_name
@@ -40,13 +77,13 @@ rom_name
 
  7. Redump does not include Parent/Clone information.
 
-### No DAT sets ###
+### No DAT sets
 
  1. Platforms with no official DAT file: xxxxx.
 
  2. GameDBInfo will be the DAT used as reference.
 
-## Levenshtein distance search algortihm ##
+### Levenshtein distance search algortihm
 
  1. Scrapers can be used to do this test: ./test_scraper <platform_short_name> <rom_name>
     Levenshtein distance will be tested on scraper search returned results
@@ -61,3 +98,5 @@ rom_name
     Result 02   "xxxxxxxxxxxxxxxxxxxxxxxxxx"  score_2  raw_score_2
     Result 03   "xxxxxxxxxxxxxxxxxxxxxxxxxx"  score_3  raw_score_3
     ```
+
+[Levenshtein distance in Wikipedia](https://en.wikipedia.org/wiki/Levenshtein_distance)
