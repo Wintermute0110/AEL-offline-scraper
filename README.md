@@ -6,7 +6,7 @@ includes a set of tools for online scraper development.
 ## Generate Offline Scraper XML files (V1 old method)
 
 The first version of the AOS uses XML files to store information. The CSV files from
-the GameDBInfo database, stored in `data_gamedb_info`, are converted to XML and stored 
+the GameDBInfo database, stored in `data_gamedb_info_csv`, are converted to XML and stored 
 in `data_gamedb_info_xml`. The MAME XML is generated from the output of `mame -listxml`
 combined with `catver.ini`.
 
