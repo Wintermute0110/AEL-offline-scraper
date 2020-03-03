@@ -1,6 +1,3 @@
-[submodule "data_gamedb_info"]
-	path = data_gamedb_info
-	url = https://github.com/Wintermute0110/Game-database-info.git
 [submodule "AEL"]
 	path = AEL
 	url = https://github.com/Wintermute0110/plugin.program.advanced.emulator.launcher
