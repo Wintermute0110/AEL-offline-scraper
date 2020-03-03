@@ -53,6 +53,9 @@ CSV_parser_dic = {
     'Sega Mega Drive' : 2,
 }
 
+# DEBUG list of platforms
+# AEL_platform_list = [ 'Nintendo SNES', ]
+
 # --- Main ----------------------------------------------------------------------------------------
 curr_dir   = os.getcwd()
 source_dir = curr_dir + '/data_gamedb_info_csv/'
@@ -66,8 +69,9 @@ print('Destination directory is "{}"'.format(dest_dir))
 # * If the CSV cannot be opened then create an empty XML file, just with the header.
 #
 # Traverse list of platforms, open CSV files, parse them and write XML.
-for pobj in AEL_platforms:
+for platform_long_name in AEL_platform_list:
     print('')
+    pobj = AEL_platforms[platform_long_to_index_dic[platform_long_name]]
 
     # Skip alias platforms (use parent XML).
     if pobj.aliasof is not None:
@@ -122,19 +126,33 @@ for pobj in AEL_platforms:
         num_line += 1
         num_fields = len(csv_row)
         if parser_type == 1:
+            # 0 -> 2020 Super Baseball (USA)>
+            # 1 -> 2020 Super Baseball>
+            # 2 -> 1993>
+            # 3 -> ESRB - RP (Rating Pending)>
+            # 4 -> Tradewest>
+            # 5 -> Pallas>
+            # 6 -> Sports/Baseball>
+            # 7 -> 4.6>
+            # 8 -> 1-2 Players>
+            # 9 -> In the year 2020, baseball finally evolved...
             game_str = text_str_2_Uni(csv_row[0])
             str_list.append('<game name="{}">\n'.format(text_escape_XML(game_str)))
-            str_list.append(XML_text('description',  text_str_2_Uni(csv_row[1])))
-            str_list.append(XML_text('year',         text_str_2_Uni(csv_row[2])))
-            str_list.append(XML_text('rating',       text_str_2_Uni(csv_row[3])))
+            str_list.append(XML_text('title', text_str_2_Uni(csv_row[1])))
+            str_list.append(XML_text('year', text_str_2_Uni(csv_row[2])))
+            str_list.append(XML_text('rating', text_str_2_Uni(csv_row[3])))
+            if num_fields > 4:
+                str_list.append(XML_text('publisher', text_str_2_Uni(csv_row[4])))
             if num_fields > 5:
-                str_list.append(XML_text('manufacturer', text_str_2_Uni(csv_row[4])))
+                str_list.append(XML_text('developer', text_str_2_Uni(csv_row[5])))
             if num_fields > 6:
-                str_list.append(XML_text('genre',        text_str_2_Uni(csv_row[5])))
+                str_list.append(XML_text('genre', text_str_2_Uni(csv_row[6])))
             if num_fields > 7:
-                str_list.append(XML_text('player',       text_str_2_Uni(csv_row[6])))
+                str_list.append(XML_text('score', text_str_2_Uni(csv_row[7])))
             if num_fields > 8:
-                str_list.append(XML_text('story',        text_str_2_Uni(csv_row[7])))
+                str_list.append(XML_text('nplayers', text_str_2_Uni(csv_row[8])))
+            if num_fields > 9:
+                str_list.append(XML_text('plot', text_str_2_Uni(csv_row[9])))
             str_list.append('</game>\n')
             continue
 
