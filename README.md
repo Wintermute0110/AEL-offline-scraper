@@ -13,17 +13,22 @@ combined with `catver.ini`.
 ### Updating AOS XML files
 
  1. Use `v1_convert_GameDBInfo_CVS_to_AOS_XML.py` to convert the GameDBInfo CSV files into XML.
+    This script read files from `./data_gamedb_info_csv/` and outputs files in 
+    `./output_AOS_xml/`.
 
- 2. Use `v1_convert_MAME_XML_to_AOS_XML.py` to convert `MAME_raw.xml` and `catver.ini` into
-    `MAME.xml`.
+ 2. Use `v1_convert_MAME_XML_to_AOS_XML.py` to convert `./data_mame/MAME_raw.xml` and 
+    `./data_mame/catver.ini` into `./output_AOS_xml/MAME.xml`.
 
- 3. Copy XML files from `aaa` into `bbb`.
+ 3. Copy XML files from `./output_AOS_xml/` into `AEL_DIR/data-AOS/`.
 
- 3. Update AOS index file so AEL can display the AOS contents.
+ 3. Use `AEL_DIR/dev-scrapers/update_GameDBInfo_json_index.py` to update the AOS index file 
+    so AEL can display the AOS contents. The index file is stored in
+    `AEL_DIR/data/GameDB_info.json`. The index must be refreshed every time the XML are
+    changed in AEL.
 
 ## Generate Offline Scraper XML files (V2 current method)
 
-Same as V1 **BUT** use JSON instead of XML. This will increase the loading speed of the
+Same as V1 *but* use **JSON** instead of **XML**. This will increase the loading speed of the
 AOS databases a lot.
 
 ## Generate Offline Scraper JSON files (V3 new method)
