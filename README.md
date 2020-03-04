@@ -21,9 +21,9 @@ combined with `catver.ini`.
 
  3. Copy XML files from `./output_AOS_xml/` into `AEL_DIR/data-AOS/`.
 
- 3. Use `AEL_DIR/dev-scrapers/update_GameDBInfo_json_index.py` to update the AOS index file 
+ 3. Use `AEL_DIR/dev-scrapers/v1_update_GameDBInfo_json_index.py` to update the AOS index file 
     so AEL can display the AOS contents. The index file is stored in
-    `AEL_DIR/data/GameDB_info.json`. The index must be refreshed every time the XML are
+    `AEL_DIR/data/AOS_GameDB_info.json`. The index must be refreshed every time the XML are
     changed in AEL.
 
 ## Generate Offline Scraper XML files (V2 current method)
