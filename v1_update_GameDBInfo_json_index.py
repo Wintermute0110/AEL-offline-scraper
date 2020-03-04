@@ -40,6 +40,7 @@ gamedb_info_dic = {}
 for platform in AEL_platform_list:
     if platform == PLATFORM_UNKNOWN_LONG: continue
     # print('Processing platform "{}"'.format(platform))
+    pobj = AEL_platforms[platform_long_to_index_dic[platform]]
 
     # Open XML file and count ROMs
     xml_file = GAMEDB_XML_DIR.pjoin(platform + '.xml').getPath()
@@ -47,10 +48,14 @@ for platform in AEL_platform_list:
     games = audit_load_OfflineScraper_XML(xml_file)
 
     # Count ROMs and add to dictionary
-    platform_info = {'numROMs' : 0 }
+    platform_info = {
+        'numROMs' : 0,
+        'aliasof' : None,
+    }
     platform_info['numROMs'] = len(games)
-    gamedb_info_dic[platform] = platform_info
+    platform_info['aliasof'] = pobj.aliasof
     # print('numROMs = {}'.format(platform_info['numROMs']))
+    gamedb_info_dic[platform] = platform_info
 # print('Saving JSON index file...')
 fs_write_JSON_file(FileName('./'), GAMEDB_JSON_BASE_NOEXT, gamedb_info_dic)
 sys.exit(0)
