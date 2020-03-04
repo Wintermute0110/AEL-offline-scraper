@@ -28,6 +28,11 @@
 #   <player>",I1,"</player> 
 #   <story>",J1,"</story>
 # </game>"
+#
+# Some databases need to be merged, for example "NEC PC Engine.csv" and "NEC TurboGrafx 16.csv"
+#
+# As usual MAME is a special case. Plots should be extracted from the CSV and merged with
+# the MAME_raw.xml and catver.ini files.
 # -------------------------------------------------------------------------------------------------
 
 # --- Python standard library ---
@@ -125,17 +130,20 @@ for platform_long_name in AEL_platform_list:
     for csv_row in csv_text_list:
         num_line += 1
         num_fields = len(csv_row)
+
+        # Parser 1 (default). Example for the SNES.
+        #
+        # 0 ROM name  -> 2020 Super Baseball (USA)>
+        # 1 Title     -> 2020 Super Baseball>
+        # 2 Year      -> 1993>
+        # 3 Rating    -> ESRB - RP (Rating Pending)>
+        # 4 Publisher -> Tradewest>
+        # 5 Developer -> Pallas>
+        # 6 Genre     -> Sports/Baseball>
+        # 7 Rating    -> 4.6>
+        # 8 PLayers   -> 1-2 Players>
+        # 9 Plot      -> In the year 2020, baseball finally evolved...
         if parser_type == 1:
-            # 0 -> 2020 Super Baseball (USA)>
-            # 1 -> 2020 Super Baseball>
-            # 2 -> 1993>
-            # 3 -> ESRB - RP (Rating Pending)>
-            # 4 -> Tradewest>
-            # 5 -> Pallas>
-            # 6 -> Sports/Baseball>
-            # 7 -> 4.6>
-            # 8 -> 1-2 Players>
-            # 9 -> In the year 2020, baseball finally evolved...
             game_str = text_str_2_Uni(csv_row[0])
             str_list.append('<game name="{}">\n'.format(text_escape_XML(game_str)))
             str_list.append(XML_text('title', text_str_2_Uni(csv_row[1])))
@@ -160,6 +168,7 @@ for platform_long_name in AEL_platform_list:
             print('"{}"'.format(cvs_line.strip()))
             sys.exit(1)
 
+        # Parser 2.
         elif parser_type == 2:
             game_str = text_str_2_Uni(csv_row[0])
             str_list.append('<game name="{}">\n'.format(text_escape_XML(game_str)))
