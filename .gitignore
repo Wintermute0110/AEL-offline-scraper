@@ -5,3 +5,7 @@
 # Misc files
 *.html
 *.kate-swp
+
+# Temp files
+output_AOS_xml_v1/
+list_Launchbox_platforms.txt

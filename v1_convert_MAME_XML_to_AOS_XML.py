@@ -127,13 +127,13 @@ for event, elem in context:
     # Get MAME version
     if event == "start" and elem.tag == "machine":
         machine = {
-            'name' : '',
+            'ROM' : '',
             'description' : '',
             'year' : '',
             'manufacturer' : '',
         }
         machine_name = elem.attrib['name']
-        machine['name'] = machine_name
+        machine['ROM'] = machine_name
         num_machines += 1
         if __debug_MAME_XML_parser:
             print('New machine      {}'.format(machine_name))
@@ -187,13 +187,13 @@ try:
         '</header>\n'
     )
     for key in sorted(machines):
-        name         = string_to_XML(machines[key]['name'])
+        ROM          = string_to_XML(machines[key]['ROM'])
         description  = string_to_XML(machines[key]['description'])
         year         = string_to_XML(machines[key]['year'])
         manufacturer = string_to_XML(machines[key]['manufacturer'])
         genre        = categories_dic[key] if key in categories_dic else 'Unknown'
         genre        = string_to_XML(genre)
-        str_list.append('<game name="{}">\n'.format(name) +
+        str_list.append('<game ROM="{}">\n'.format(ROM) +
             '  <description>'  + description   + '</description>\n' +
             '  <year>'         + year          + '</year>\n' +
             '  <manufacturer>' + manufacturer  + '</manufacturer>\n' +
