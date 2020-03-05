@@ -128,6 +128,9 @@ for event, elem in context:
     if event == "start" and elem.tag == "machine":
         machine = {
             'ROM' : '',
+            'isBIOS' : False,
+            'isDevice' : False,
+            'isMechanical' : False,
             'description' : '',
             'year' : '',
             'manufacturer' : '',
@@ -137,6 +140,20 @@ for event, elem in context:
         num_machines += 1
         if __debug_MAME_XML_parser:
             print('New machine      {}'.format(machine_name))
+
+        # Check <machine> attributes.
+        if 'isbios' in elem.attrib:
+            machine['isBIOS'] = True if elem.attrib['isbios'] == 'yes' else False
+        else:
+            machine['isBIOS'] = False
+        if 'isdevice' in elem.attrib:
+            machine['isDevice'] = True if elem.attrib['isdevice'] == 'yes' else False
+        else:
+            machine['isDevice'] = False
+        if 'ismechanical' in elem.attrib:
+            machine['isMechanical'] = True if elem.attrib['ismechanical'] == 'yes' else False
+        else:
+            machine['isMechanical'] = False
 
     elif event == "start" and elem.tag == "description":
         if elem.text is None: print('machine {} description is None'.format(machine_name))
@@ -166,12 +183,12 @@ for event, elem in context:
     # --- Print something to prove we are doing stuff ---
     num_iteration += 1
     if num_iteration % 100000 == 0:
-      print('Processed {:10d} events ({:6d} machines so far)...'.format(num_iteration, num_machines))
+      print('Processed {:10,d} events ({:6,d} machines so far)...'.format(num_iteration, num_machines))
 
     # --- Stop after some iterations for debug ---
     # if num_iteration > 100000: break
-print('Processed {} MAME XML events'.format(num_iteration))
-print('Total number of machines {}'.format(num_machines))
+print('Processed {:,} MAME XML events'.format(num_iteration))
+print('Total number of machines {:,}'.format(num_machines))
 
 # --- Now write simplified XML output file -------------------------------------------------------
 # log_info('_fs_write_Favourites_XML_file() Saving XML file {0}'.format(roms_xml_file))
@@ -179,13 +196,12 @@ try:
     str_list = []
     str_list.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
     str_list.append('<menu>\n')
-    str_list.append('<header>\n' +
-        '  <listname>MAME</listname>\n' +
-        '  <lastlistupdate></lastlistupdate>\n' +
-        '  <listversion>{}</listversion>\n'.format(mame_version_str) +
-        '  <exporterversion>{}</exporterversion>\n'.format('v1_convert_MAME_XML_to_AOS_XML') +
-        '</header>\n'
-    )
+    str_list.append('<header>\n')
+    str_list.append('  <listname>MAME</listname>\n')
+    str_list.append('  <lastlistupdate></lastlistupdate>\n')
+    str_list.append('  <listversion>{}</listversion>\n'.format(mame_version_str))
+    str_list.append('  <exporterversion>v1_convert_MAME_XML_to_AOS_XML.py</exporterversion>\n')
+    str_list.append('</header>\n')
     for key in sorted(machines):
         ROM          = string_to_XML(machines[key]['ROM'])
         description  = string_to_XML(machines[key]['description'])
@@ -193,13 +209,15 @@ try:
         manufacturer = string_to_XML(machines[key]['manufacturer'])
         genre        = categories_dic[key] if key in categories_dic else 'Unknown'
         genre        = string_to_XML(genre)
-        str_list.append('<game ROM="{}">\n'.format(ROM) +
-            '  <description>'  + description   + '</description>\n' +
-            '  <year>'         + year          + '</year>\n' +
-            '  <manufacturer>' + manufacturer  + '</manufacturer>\n' +
-            '  <genre>'        + genre         + '</genre>\n' +
-            '</game>\n'
-        )
+        str_list.append('<game ROM="{}">\n'.format(ROM))
+        str_list.append('  <isBIOS>' + unicode(machines[key]['isBIOS']) + '</isBIOS>\n')
+        str_list.append('  <isDevice>' + unicode(machines[key]['isDevice']) + '</isDevice>\n')
+        str_list.append('  <isMechanical>' + unicode(machines[key]['isMechanical']) + '</isMechanical>\n')
+        str_list.append('  <description>' + description + '</description>\n')
+        str_list.append('  <year>' + year + '</year>\n')
+        str_list.append('  <manufacturer>' + manufacturer + '</manufacturer>\n')
+        str_list.append('  <genre>' + genre + '</genre>\n')
+        str_list.append('</game>\n')
     str_list.append('</menu>\n')
     file_obj = open(output_filename, 'wt')
     file_obj.write(''.join(str_list).encode('utf-8')) 
