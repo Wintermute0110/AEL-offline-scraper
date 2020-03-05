@@ -31,31 +31,48 @@ combined with `catver.ini`.
 Same as V1 *but* use **JSON** instead of **XML**. This will increase the loading speed of the
 AOS databases a lot.
 
+Version 2 of the AOS should be easy to do if V1 is working well. It will require some
+changes in AEL.
+
 ## Generate Offline Scraper JSON files (V3 new method)
 
- * The second version of the AOS uses JSON to store information.
+ * The third version of the AOS uses JSON to store information.
 
  * The database combines XML files with metadata from GameDBInfo (and maybe other
    sources like Tempest INI files) with No-Intro/Redump/Libretro DAT files.
+
+ * The XML files are converted once and then edited manually.
+
+ * There are scripts to verify the XML files, for example, do all the ROMs in the XML
+   exist in the DAT, are the ROMs in the XML ordered alphabetically, etc.?
+
+ * Metadata of ROMs not in No-Intro/Redump DATs are in an EXTRA XML file.
 
  * The database includes parent/clone, region and language information.
 
  * The database includes CRC/MD5/SHA1 for ROM audit on selected platforms.
 
-Version 2 of the AOS is still in develpment and some design decisions still to be made.
+Version 3 of the AOS is still in develpment and some design decisions still to be made.
 
 ## Notes
 
 ### No-Intro/Redump ROMsets metadata report (Cartridge systems)
 
+Documentation for the scripts:
+
+ * `list_AEL_OS_metadata_sources.py`
+
+ * `update_AEL_OS_XML_metadata.py`
+
 ```
-rom_name
-  [DAT | ---]
-  [Parent | Clone | -----]
-  GameDBInfo | yyyy | genre | studio | nplayers | esrb | plot |
-  HyperList  | ---- | ccccc | studio | nplayers | esrb | plot |
-  Override   | ---- | ----- | studio | nplayers | esrb | plot |
-  [status]   | yyyy | aaaaa | studio | nplayers | esrb | plot |
+ROM rom_basename
+  Data source | Exists  | isClone | Year | Genre | 
+  ------------|---------|---------|------|
+  NoIntro     | yes     | Parent  |      |
+  GameDBInfo  |         |         | yyyy | genre | developer | nplayers | esrb | plot |
+  HyperList   |         |         | ---- | ccccc | developer | nplayers | esrb | plot |
+  Override    |         |         | ---- | ----- | developer | nplayers | esrb | plot |
+  [status]    |         |         | yyyy | aaaaa | developer | nplayers | esrb | plot |
 
 [status tag]
   [Own Override]
@@ -81,12 +98,6 @@ rom_name
  6. Use example: list_NoIntro_metadata <short_platform_name>
 
  7. Redump does not include Parent/Clone information.
-
-### No DAT sets
-
- 1. Platforms with no official DAT file: xxxxx.
-
- 2. GameDBInfo will be the DAT used as reference.
 
 ### Levenshtein distance search algortihm
 

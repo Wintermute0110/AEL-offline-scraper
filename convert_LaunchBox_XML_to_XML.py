@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2017 Wintermute0110 <wintermute0110@gmail.com>
+# ?????
+
+# Copyright (c) 2017-2020 Wintermute0110 <wintermute0110@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -9,8 +11,8 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
 
 # --- Python standard library ---
 from __future__ import unicode_literals
@@ -41,12 +43,12 @@ audit_load_LB_metadata_XML(LB_metadata_FN, games_dic, platforms_dic, gameimages_
 
 # --- List platforms ---
 for p_name in sorted(platforms_dic):
-    print("Platform '{0}'".format(p_name))
+    print("Platform '{}'".format(p_name))
 
 # --- Write per-platform ROM database ---
 system = systems['genesis']
 output_FN = FileName('./' + system['output'])
-print('Writing {0} output XML'.format(system['platform']))
+print('Writing {} output XML'.format(system['platform']))
 
 platform_games_dic = {}
 num_roms = 0
@@ -62,11 +64,11 @@ for game_key in games_dic:
         #         platform_games_dic[game_key]['image'] = 
         #         platform_games_dic[game_key]['image'] = 
         #         num_images += 1
-print('Found {0} games'.format(num_roms))
-# print('Found {0} images'.format(num_images))
+print('Found {} games'.format(num_roms))
+# print('Found {} images'.format(num_images))
 
 # --- Save Offline scraper XML ---
-# >> Create XML data
+# Create XML data
 str_list = []
 str_list.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
 str_list.append('<menu>\n')
@@ -77,7 +79,7 @@ str_list.append('    <listversion></listversion>\n')
 str_list.append('    <exporterversion></exporterversion>\n')
 str_list.append('  </header>\n')
 for rom_key in sorted(platform_games_dic):
-    str_list.append('  <game name="{0}">\n'.format(text_escape_XML(rom_key)))
+    str_list.append('  <game name="{}">\n'.format(text_escape_XML(rom_key)))
     str_list.append(XML_text('Name',              text_str_2_Uni(platform_games_dic[rom_key]['Name']), 4))
     str_list.append(XML_text('ReleaseYear',       text_str_2_Uni(platform_games_dic[rom_key]['ReleaseYear']), 4))
     str_list.append(XML_text('Overview',          text_str_2_Uni(platform_games_dic[rom_key]['Overview']), 4))
@@ -102,7 +104,7 @@ for rom_key in sorted(platform_games_dic):
     str_list.append('  </game>\n')
 str_list.append('</menu>\n')
 
-# >> Write XML file
+# Write XML file
 full_string = ''.join(str_list).encode('utf-8')
 file_obj = open(output_FN.getPath(), 'w')
 file_obj.write(full_string)
