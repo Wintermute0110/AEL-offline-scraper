@@ -7,5 +7,8 @@
 *.kate-swp
 
 # Temp files
+data_launchbox/
+data_mame/
+data_nointro_pclone/
 output_AOS_xml_v1/
 list_Launchbox_platforms.txt
