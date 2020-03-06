@@ -143,10 +143,22 @@ nointro_language_set = {
 }
 
 # --- Functions -----------------------------------------------------------------------------
+# Examples of No-Intro names:
 # "[BIOS] LaserActive (Japan) (v1.02)"
 #
 # * [BIOS] is optional.
-# * Fist tag is Region and it is mandatory.
+# * Fist tag is Region and it is mandatory. However, some ROMs have tags in the ROM_name
+#   or the first proper tag is not the region.
+#
+# --- Idea to improve this funcion ---
+# Currently regular expressions are used to extract the tags at the end of the funcion.
+# I think this can be improved by using a lexical analyser to decompose the name into
+# tokens and then analyse the tokens. For example, a No-Intro name is composed of:
+#
+# [TOKEN_BIOS] TOKEN_SPACE TOKEN_ROM_NAME (TOKEN_SPACE, TOKEN_TAG)*
+#
+# Token BIOS is optional. With this aproach we can parse correctly the few games that include
+# ( or ) characters in the ROM_name.
 #
 # Returns a tuple (
 #     ['region', 'region'],
