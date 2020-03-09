@@ -191,7 +191,7 @@ print('Processed {:,} MAME XML events'.format(num_iteration))
 print('Total number of machines {:,}'.format(num_machines))
 
 # --- Now write simplified XML output file -------------------------------------------------------
-# log_info('_fs_write_Favourites_XML_file() Saving XML file {0}'.format(roms_xml_file))
+# log_info('_fs_write_Favourites_XML_file() Saving XML file {}'.format(output_filename))
 try:
     str_list = []
     str_list.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
@@ -213,7 +213,7 @@ try:
         str_list.append('  <isBIOS>' + unicode(machines[key]['isBIOS']) + '</isBIOS>\n')
         str_list.append('  <isDevice>' + unicode(machines[key]['isDevice']) + '</isDevice>\n')
         str_list.append('  <isMechanical>' + unicode(machines[key]['isMechanical']) + '</isMechanical>\n')
-        str_list.append('  <description>' + description + '</description>\n')
+        str_list.append('  <title>' + description + '</title>\n')
         str_list.append('  <year>' + year + '</year>\n')
         str_list.append('  <manufacturer>' + manufacturer + '</manufacturer>\n')
         str_list.append('  <genre>' + genre + '</genre>\n')
@@ -223,8 +223,8 @@ try:
     file_obj.write(''.join(str_list).encode('utf-8')) 
     file_obj.close()
 except OSError:
-    print('Cannot write {} file. (Exception OSError)'.format(roms_xml_file))
+    print('Cannot write {} file. (Exception OSError)'.format(output_filename))
     pass
 except IOError:
-    print('Cannot write {} file. (Exception IOError)'.format(roms_xml_file))
+    print('Cannot write {} file. (Exception IOError)'.format(output_filename))
     pass
