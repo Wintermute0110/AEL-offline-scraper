@@ -32,24 +32,53 @@
 
 # --- Python standard library ---
 from __future__ import unicode_literals
-import xml.etree.ElementTree as ET 
+import xml.etree.ElementTree
 import re
 import sys
 
-# --- Configuration -----------------------------------------------------------
-MAME_XML_filename   = './data_mame/MAME_raw.xml'
+# --- Configuration ------------------------------------------------------------------------------
 Catver_ini_filename = './data_mame/catver.ini'
-output_filename     = './output_AOS_xml_v1/MAME.xml'
+NPLayers_ini_filename = './data_mame/nplayers.ini'
+MAME_XML_filename = './data_mame/MAME_raw.xml'
+output_filename = './output_AOS_xml_v1/MAME.xml'
 
-# See http://stackoverflow.com/questions/1091945/what-characters-do-i-need-to-escape-in-xml-documents
-def string_to_XML(unicode_obj):
-    unicode_A = unicode_obj.replace('"', '&quot;').replace("'", '&apos;').replace('&', '&amp;')
+# --- Functions ----------------------------------------------------------------------------------
+def XML_text(tag_name, tag_text = '', num_spaces = 2):
+    if tag_text:
+        tag_text = text_escape_XML(tag_text)
+        line = '{}<{}>{}</{}>'.format(' ' * num_spaces, tag_name, tag_text, tag_name)
+    else:
+        line = '{}<{} />'.format(' ' * num_spaces, tag_name)
+    return line
 
-    return unicode_A.replace('<', '&lt;').replace('>', '&gt;')
+def text_escape_XML(data_str):
+    # Ampersand MUST BE replaced FIRST
+    data_str = data_str.replace('&', '&amp;')
+    data_str = data_str.replace('>', '&gt;')
+    data_str = data_str.replace('<', '&lt;')
+    data_str = data_str.replace("'", '&apos;')
+    data_str = data_str.replace('"', '&quot;')
+    data_str = data_str.replace('\n', '&#10;')
+    data_str = data_str.replace('\r', '&#13;')
+    data_str = data_str.replace('\t', '&#9;')
 
-# -----------------------------------------------------------------------------
-# Load catver.ini
-# -----------------------------------------------------------------------------
+    return data_str
+
+def text_unescape_XML(data_str):
+    data_str = data_str.replace('&quot;', '"')
+    data_str = data_str.replace('&apos;', "'")
+    data_str = data_str.replace('&lt;', '<')
+    data_str = data_str.replace('&gt;', '>')
+    data_str = data_str.replace('&#10;', '\n')
+    data_str = data_str.replace('&#13;', '\r')
+    data_str = data_str.replace('&#9;', '\t')
+    # Ampersand MUST BE replaced LAST
+    data_str = data_str.replace('&amp;', '&')
+
+    return data_str
+
+# --- Load catver.ini ----------------------------------------------------------------------------
+# Copy this function from AML source code.
 print('Parsing ' + Catver_ini_filename)
 categories_dic = {}
 categories_set = set()
@@ -77,6 +106,10 @@ try:
                 if __debug_do_list_categories: print(line_list)
                 machine_name = line_list[0]
                 category = line_list[1]
+                # Use first category only.
+                cat_list = category.split(' / ')
+                if len(cat_list) != 2: raise RuntimeError
+                category = cat_list[0].strip()
                 if machine_name not in categories_dic:
                     categories_dic[machine_name] = category
                 categories_set.add(category)
@@ -88,18 +121,91 @@ try:
             sys.exit(10)
     f.close()
 except:
-    pass
+    raise RuntimeError
 print('Catver Number of machines   {:6d}'.format(len(categories_dic)))
 print('Catver Number of categories {:6d}'.format(len(categories_set)))
 
-# -----------------------------------------------------------------------------
+# --- Load nplayers.ini --------------------------------------------------------------------------
+# Copy this function from AML source code.
+__debug_do_list_categories = False
+print('mame_load_nplayers_ini() Parsing "{}"'.format(NPLayers_ini_filename))
+nplayers_dic = {
+    'version' : 'unknown',
+    'unique_categories' : True,
+    'single_category' : False,
+    'isValid' : False,
+    'data' : {},
+    'categories' : set(),
+}
+
+# --- read_status FSM values ---
+# 0 -> Looking for '[NPlayers]' tag
+# 1 -> Reading categories
+# 2 -> Categories finished. STOP
+read_status = 0
+try:
+    f = open(NPLayers_ini_filename, 'rt')
+except IOError:
+    print('mame_load_nplayers_ini() (IOError) opening "{}"'.format(NPLayers_ini_filename))
+    raise RuntimeError
+for cat_line in f:
+    stripped_line = cat_line.strip()
+    if __debug_do_list_categories: log_debug('Line "' + stripped_line + '"')
+    if read_status == 0:
+        m = re.search(r'NPlayers ([0-9\.]+) / ', stripped_line)
+        if m: nplayers_dic['version'] = m.group(1)
+        if stripped_line == '[NPlayers]':
+            if __debug_do_list_categories: log_debug('Found [NPlayers]')
+            read_status = 1
+    elif read_status == 1:
+        line_list = stripped_line.split("=")
+        if len(line_list) == 1:
+            read_status = 2
+            continue
+        else:
+            machine_name, current_category = str(line_list[0]), str(line_list[1])
+            if __debug_do_list_categories: log_debug('"{0}" / "{1}"'.format(machine_name, current_category))
+            nplayers_dic['categories'].add(current_category)
+            if machine_name in nplayers_dic['data']:
+                # Force a single category to avoid nplayers.ini bugs.
+                pass
+                # nplayers_dic['data'][machine_name].add(current_category)
+                # log_debug('machine "{0}"'.format(machine_name))
+                # log_debug('current_category "{0}"'.format(current_category))
+                # log_debug('"{0}"'.format(unicode(nplayers_dic['data'][machine_name])))
+                # raise ValueError('unique_categories False')
+            else:
+                nplayers_dic['data'][machine_name] =  [current_category]
+    elif read_status == 2:
+        print('mame_load_nplayers_ini() Reached end of nplayers parsing.')
+        break
+    else:
+        raise ValueError('Unknown read_status FSM value')
+f.close()
+nplayers_dic['single_category'] = True if len(nplayers_dic['categories']) == 1 else False
+# nplayers.ini has repeated machines, so checking for unique_cateogories is here.
+for m_name in sorted(nplayers_dic['data']):
+    if len(nplayers_dic['data'][m_name]) > 1:
+        nplayers_dic['unique_categories'] = False
+        break
+# If categories are unique for each machine transform lists into strings
+if nplayers_dic['unique_categories']:
+    for m_name in nplayers_dic['data']:
+        nplayers_dic['data'][m_name] = nplayers_dic['data'][m_name][0]
+print('mame_load_nplayers_ini() Machines           {}'.format(len(nplayers_dic['data'])))
+print('mame_load_nplayers_ini() Categories         {}'.format(len(nplayers_dic['categories'])))
+print('mame_load_nplayers_ini() Version            {}'.format(nplayers_dic['version']))
+print('mame_load_nplayers_ini() unique_categories  {}'.format(nplayers_dic['unique_categories']))
+print('mame_load_nplayers_ini() single_category    {}'.format(nplayers_dic['single_category']))
+
+# ------------------------------------------------------------------------------------------------
 # Incremental Parsing approach B (from [1])
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
 # Do not load whole MAME XML into memory! Use an iterative parser to
 # grab only the information we want and discard the rest.
 # See http://effbot.org/zone/element-iterparse.htm [1]
 __debug_MAME_XML_parser = 0
-context = ET.iterparse(MAME_XML_filename, events=("start", "end"))
+context = xml.etree.ElementTree.iterparse(MAME_XML_filename, events=("start", "end"))
 context = iter(context)
 event, root = context.next()
 mame_version_str = 'MAME ' + root.attrib['build']
@@ -182,49 +288,44 @@ for event, elem in context:
 
     # --- Print something to prove we are doing stuff ---
     num_iteration += 1
-    if num_iteration % 100000 == 0:
+    if num_iteration % 200000 == 0:
       print('Processed {:10,d} events ({:6,d} machines so far)...'.format(num_iteration, num_machines))
 
     # --- Stop after some iterations for debug ---
-    # if num_iteration > 100000: break
+    # if num_iteration > 200000: break
 print('Processed {:,} MAME XML events'.format(num_iteration))
 print('Total number of machines {:,}'.format(num_machines))
 
 # --- Now write simplified XML output file -------------------------------------------------------
-# log_info('_fs_write_Favourites_XML_file() Saving XML file {}'.format(output_filename))
-try:
-    str_list = []
-    str_list.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>\n')
-    str_list.append('<menu>\n')
-    str_list.append('<header>\n')
-    str_list.append('  <listname>MAME</listname>\n')
-    str_list.append('  <lastlistupdate></lastlistupdate>\n')
-    str_list.append('  <listversion>{}</listversion>\n'.format(mame_version_str))
-    str_list.append('  <exporterversion>v1_convert_MAME_XML_to_AOS_XML.py</exporterversion>\n')
-    str_list.append('</header>\n')
-    for key in sorted(machines):
-        ROM          = string_to_XML(machines[key]['ROM'])
-        description  = string_to_XML(machines[key]['description'])
-        year         = string_to_XML(machines[key]['year'])
-        manufacturer = string_to_XML(machines[key]['manufacturer'])
-        genre        = categories_dic[key] if key in categories_dic else 'Unknown'
-        genre        = string_to_XML(genre)
-        str_list.append('<game ROM="{}">\n'.format(ROM))
-        str_list.append('  <isBIOS>' + unicode(machines[key]['isBIOS']) + '</isBIOS>\n')
-        str_list.append('  <isDevice>' + unicode(machines[key]['isDevice']) + '</isDevice>\n')
-        str_list.append('  <isMechanical>' + unicode(machines[key]['isMechanical']) + '</isMechanical>\n')
-        str_list.append('  <title>' + description + '</title>\n')
-        str_list.append('  <year>' + year + '</year>\n')
-        str_list.append('  <manufacturer>' + manufacturer + '</manufacturer>\n')
-        str_list.append('  <genre>' + genre + '</genre>\n')
-        str_list.append('</game>\n')
-    str_list.append('</menu>\n')
-    file_obj = open(output_filename, 'wt')
-    file_obj.write(''.join(str_list).encode('utf-8')) 
-    file_obj.close()
-except OSError:
-    print('Cannot write {} file. (Exception OSError)'.format(output_filename))
-    pass
-except IOError:
-    print('Cannot write {} file. (Exception IOError)'.format(output_filename))
-    pass
+print('Generating output XML...')
+o_sl = []
+o_sl.append('<?xml version="1.0" encoding="utf-8" standalone="yes"?>')
+o_sl.append('<menu>')
+o_sl.append('<header>')
+o_sl.append('  <listname>MAME</listname>')
+o_sl.append('  <lastlistupdate></lastlistupdate>')
+o_sl.append('  <listversion>{}</listversion>'.format(mame_version_str))
+o_sl.append('  <exporterversion>v1_convert_MAME_XML_to_AOS_XML.py</exporterversion>')
+o_sl.append('</header>')
+for key in sorted(machines):
+    o_sl.append('<game ROM="{}">'.format(machines[key]['ROM']))
+    o_sl.append(XML_text('title', machines[key]['description']))
+    o_sl.append(XML_text('year', machines[key]['year']))
+    o_sl.append(XML_text('genre', categories_dic[key] if key in categories_dic else '[Not set]'))
+    o_sl.append(XML_text('developer', machines[key]['manufacturer']))
+    # Do not print unused fields in the XML to save space. They will generated to default ''.
+    # o_sl.append(XML_text('publisher'))
+    # o_sl.append(XML_text('rating'))
+    o_sl.append(XML_text('nplayers', nplayers_dic['data'][key] if key in nplayers_dic['data'] else '[Not set]'))
+    # o_sl.append(XML_text('score'))
+    # o_sl.append(XML_text('plot'))
+    # MAME additional fields.
+    o_sl.append(XML_text('isBIOS', unicode(machines[key]['isBIOS'])))
+    o_sl.append(XML_text('isDevice', unicode(machines[key]['isDevice'])))
+    o_sl.append(XML_text('isMechanical', unicode(machines[key]['isMechanical'])))
+    o_sl.append('</game>')
+o_sl.append('</menu>')
+
+print('Writing file "{}"'.format(output_filename))
+with open(output_filename, 'w') as file:
+    file.write('\n'.join(o_sl).encode('utf-8'))
