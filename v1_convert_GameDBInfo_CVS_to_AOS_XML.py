@@ -21,8 +21,8 @@
 #     <title />
 #     <year />
 #     <genre />
-#     <publisher />
 #     <developer />
+#     <publisher />
 #     <rating />    (ESRB rating or other rating)
 #     <nplayers />
 #     <score />     (Score is how good is the game)
@@ -52,7 +52,10 @@ if __name__ == "__main__" and __package__ is None:
 from resources.utils import *
 from resources.platforms import *
 
-# --- List of CVS files that will be converted ----------------------------------------------------
+# --- Configuration -------------------------------------------------------------------------------
+SOURCE_DIR = 'data_gamedb_info_csv'
+DESTINATION_DIR = 'output_AOS_xml_v1'
+
 # If a CSV/platform long_name is not here then it uses parser 1
 CSV_parser_dic = {
     'Sega Mega Drive' : 2,
@@ -63,8 +66,8 @@ CSV_parser_dic = {
 
 # --- Main ----------------------------------------------------------------------------------------
 curr_dir   = os.getcwd()
-source_dir = curr_dir + '/data_gamedb_info_csv/'
-dest_dir   = curr_dir + '/output_AOS_xml_v1/'
+source_dir = os.path.join(curr_dir, SOURCE_DIR)
+dest_dir   = os.path.join(curr_dir, DESTINATION_DIR)
 print('Current directory is     "{}"'.format(curr_dir))
 print('Source directory is      "{}"'.format(source_dir))
 print('Destination directory is "{}"'.format(dest_dir))
@@ -153,8 +156,8 @@ for platform_long_name in AEL_platform_list:
             if num_fields > 1: str_list.append(XML_text('title', text_str_2_Uni(csv_row[1])))
             if num_fields > 2: str_list.append(XML_text('year', text_str_2_Uni(csv_row[2])))
             if num_fields > 6: str_list.append(XML_text('genre', text_str_2_Uni(csv_row[6])))
-            if num_fields > 4: str_list.append(XML_text('publisher', text_str_2_Uni(csv_row[4])))
             if num_fields > 5: str_list.append(XML_text('developer', text_str_2_Uni(csv_row[5])))
+            if num_fields > 4: str_list.append(XML_text('publisher', text_str_2_Uni(csv_row[4])))
             if num_fields > 3: str_list.append(XML_text('rating', text_str_2_Uni(csv_row[3])))
             if num_fields > 8: str_list.append(XML_text('nplayers', text_str_2_Uni(csv_row[8])))
             if num_fields > 7: str_list.append(XML_text('score', text_str_2_Uni(csv_row[7])))
@@ -179,8 +182,8 @@ for platform_long_name in AEL_platform_list:
             if num_fields > 3: str_list.append(XML_text('title', text_str_2_Uni(csv_row[3])))
             if num_fields > 1: str_list.append(XML_text('year', text_str_2_Uni(csv_row[1])))
             if num_fields > 6: str_list.append(XML_text('genre', text_str_2_Uni(csv_row[6])))
-            if num_fields > 4: str_list.append(XML_text('publisher', text_str_2_Uni(csv_row[4])))
             if num_fields > 5: str_list.append(XML_text('developer', text_str_2_Uni(csv_row[5])))
+            if num_fields > 4: str_list.append(XML_text('publisher', text_str_2_Uni(csv_row[4])))
             if num_fields > 7: str_list.append(XML_text('rating', text_str_2_Uni(csv_row[7])))
             if num_fields > 8: str_list.append(XML_text('nplayers', text_str_2_Uni(csv_row[8])))
             if num_fields > 7: str_list.append(XML_text('score', text_str_2_Uni(csv_row[7])))
