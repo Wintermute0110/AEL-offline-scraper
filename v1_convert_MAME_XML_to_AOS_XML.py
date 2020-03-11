@@ -32,15 +32,22 @@
 
 # --- Python standard library ---
 from __future__ import unicode_literals
-import xml.etree.ElementTree
+import io
+import json
 import re
 import sys
+import time
+import xml.etree.ElementTree
 
 # --- Configuration ------------------------------------------------------------------------------
 Catver_ini_filename = './data_mame/catver.ini'
 NPLayers_ini_filename = './data_mame/nplayers.ini'
 MAME_XML_filename = './data_mame/MAME_raw.xml'
-output_filename = './output_AOS_xml_v1/MAME.xml'
+output_filename            = './output_AOS_xml_v1/MAME.xml'
+output_filename_BIOS       = './output_AOS_xml_v1/MAME_BIOSes.json'
+output_filename_Devices    = './output_AOS_xml_v1/MAME_Devices.json'
+output_filename_Mechanical = './output_AOS_xml_v1/MAME_Mechanical.json'
+OPTION_COMPACT_JSON = False
 
 # --- Functions ----------------------------------------------------------------------------------
 def XML_text(tag_name, tag_text = '', num_spaces = 2):
@@ -76,6 +83,28 @@ def text_unescape_XML(data_str):
     data_str = data_str.replace('&amp;', '&')
 
     return data_str
+
+def fs_write_JSON_file(json_filename, json_data, verbose = True):
+    l_start = time.time()
+    if verbose:
+        print('fs_write_JSON_file() "{}"'.format(json_filename))
+    try:
+        with io.open(json_filename, 'wt', encoding='utf-8') as file:
+            if OPTION_COMPACT_JSON:
+                file.write(unicode(json.dumps(json_data, ensure_ascii = False, sort_keys = True)))
+            else:
+                file.write(unicode(json.dumps(json_data, ensure_ascii = False, sort_keys = True,
+                    indent = 1, separators = (',', ':'))))
+    except OSError:
+        kodi_notify('Advanced MAME Launcher',
+                    'Cannot write {} file (OSError)'.format(json_filename))
+    except IOError:
+        kodi_notify('Advanced MAME Launcher',
+                    'Cannot write {} file (IOError)'.format(json_filename))
+    l_end = time.time()
+    if verbose:
+        write_time_s = l_end - l_start
+        print('fs_write_JSON_file() Writing time {0:f} s'.format(write_time_s))
 
 # --- Load catver.ini ----------------------------------------------------------------------------
 # Copy this function from AML source code.
@@ -220,6 +249,9 @@ print('MAME version is "{}"'.format(mame_version_str))
 #     'name' : '', 'description' : '', 'year' : '', 'manufacturer' : ''
 #   }
 machines = {}
+BIOS_set = set()
+Devices_set = set()
+Mechanical_set = set()
 machine_name = ''
 num_iteration = 0
 num_machines = 0
@@ -260,6 +292,10 @@ for event, elem in context:
             machine['isMechanical'] = True if elem.attrib['ismechanical'] == 'yes' else False
         else:
             machine['isMechanical'] = False
+
+        if machine['isBIOS']: BIOS_set.add(machine_name)
+        if machine['isDevice']: Devices_set.add(machine_name)
+        if machine['isMechanical']: Mechanical_set.add(machine_name)
 
     elif event == "start" and elem.tag == "description":
         if elem.text is None: print('machine {} description is None'.format(machine_name))
@@ -319,13 +355,22 @@ for key in sorted(machines):
     o_sl.append(XML_text('nplayers', nplayers_dic['data'][key] if key in nplayers_dic['data'] else '[Not set]'))
     # o_sl.append(XML_text('score'))
     # o_sl.append(XML_text('plot'))
-    # MAME additional fields.
-    o_sl.append(XML_text('isBIOS', unicode(machines[key]['isBIOS'])))
-    o_sl.append(XML_text('isDevice', unicode(machines[key]['isDevice'])))
-    o_sl.append(XML_text('isMechanical', unicode(machines[key]['isMechanical'])))
+    # MAME additional fields. Put them in separate JSON files.
+    # o_sl.append(XML_text('isBIOS', unicode(machines[key]['isBIOS'])))
+    # o_sl.append(XML_text('isDevice', unicode(machines[key]['isDevice'])))
+    # o_sl.append(XML_text('isMechanical', unicode(machines[key]['isMechanical'])))
     o_sl.append('</game>')
 o_sl.append('</menu>')
 
 print('Writing file "{}"'.format(output_filename))
 with open(output_filename, 'w') as file:
     file.write('\n'.join(o_sl).encode('utf-8'))
+
+print('Writing file "{}"'.format(output_filename_BIOS))
+fs_write_JSON_file(output_filename_BIOS, list(sorted(BIOS_set)))
+
+print('Writing file "{}"'.format(output_filename_Devices))
+fs_write_JSON_file(output_filename_Devices, list(sorted(Devices_set)))
+
+print('Writing file "{}"'.format(output_filename_Mechanical))
+fs_write_JSON_file(output_filename_Mechanical, list(sorted(Mechanical_set)))
