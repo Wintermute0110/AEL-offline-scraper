@@ -11,4 +11,6 @@ data_launchbox/
 data_mame/
 data_nointro_pclone/
 output_AOS_xml_v1/
+
+AOS_GameDB_info.json
 list_Launchbox_platforms.txt
