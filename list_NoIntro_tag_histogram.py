@@ -153,9 +153,11 @@ nointro_language_set = {
 # --- Idea to improve this funcion ---
 # Currently regular expressions are used to extract the tags at the end of the funcion.
 # I think this can be improved by using a lexical analyser to decompose the name into
-# tokens and then analyse the tokens. For example, a No-Intro name is composed of:
+# tokens and then analyse the tokens. For example, a No-Intro name is composed of
+# (region token tag is mandatory):
 #
-# [TOKEN_BIOS] TOKEN_SPACE TOKEN_ROM_NAME (TOKEN_SPACE, TOKEN_TAG)*
+# 1) TOKEN_ROMNAME TOKEN_SPACE TOKEN_TAG (TOKEN_SPACE TOKEN_TAG)*
+# 2) TOKEN_BIOS TOKEN_SPACE TOKEN_ROMNAME TOKEN_SPACE TOKEN_TAG (TOKEN_SPACE TOKEN_TAG)*
 #
 # Token BIOS is optional. With this aproach we can parse correctly the few games that include
 # ( or ) characters in the ROM_name.
@@ -165,6 +167,11 @@ nointro_language_set = {
 #     ['language', 'language'],
 #     ['(tag)', '(tag)']
 # )
+#
+# See https://www.pythonmembers.club/2018/05/01/building-a-lexer-in-python-tutorial/
+# for ideas about making a lexical analizer. After the lexical analyzer decomposes
+# the filename in tokens the parser determines if the tokens are a valid No-Intro filename.
+#
 def extract_NoIntro_tags(basename):
     # Extract raw tags.
     # Maybe this can be improved because tags must be at the end!
