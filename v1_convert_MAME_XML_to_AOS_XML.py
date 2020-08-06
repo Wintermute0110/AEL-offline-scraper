@@ -1,9 +1,9 @@
-#!/usr/bin/python -B
+#!/usr/bin/python3 -B
 # -*- coding: utf-8 -*-
 
 # Convert MAME output XML into a simplified XML suitable for offline scrapping.
 
-# Copyright (c) 2016 Wintermute0110 <wintermute0110@gmail.com>
+# Copyright (c) 2016-2020 Wintermute0110 <wintermute0110@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,9 +40,9 @@ import time
 import xml.etree.ElementTree
 
 # --- Configuration ------------------------------------------------------------------------------
-Catver_ini_filename = './data_mame/catver.ini'
-NPLayers_ini_filename = './data_mame/nplayers.ini'
-MAME_XML_filename = './data_mame/MAME_raw.xml'
+Catver_ini_filename        = './data_mame/catver.ini'
+NPLayers_ini_filename      = './data_mame/nplayers.ini'
+MAME_XML_filename          = './data_mame/MAME.xml'
 output_filename            = './output_AOS_xml_v1/MAME.xml'
 output_filename_BIOS       = './output_AOS_xml_v1/MAME_BIOSes.json'
 output_filename_Devices    = './output_AOS_xml_v1/MAME_Devices.json'
@@ -91,10 +91,10 @@ def fs_write_JSON_file(json_filename, json_data, verbose = True):
     try:
         with io.open(json_filename, 'wt', encoding='utf-8') as file:
             if OPTION_COMPACT_JSON:
-                file.write(unicode(json.dumps(json_data, ensure_ascii = False, sort_keys = True)))
+                file.write(json.dumps(json_data, ensure_ascii = False, sort_keys = True))
             else:
-                file.write(unicode(json.dumps(json_data, ensure_ascii = False, sort_keys = True,
-                    indent = 1, separators = (',', ':'))))
+                file.write(json.dumps(json_data, ensure_ascii = False, sort_keys = True,
+                    indent = 1, separators = (',', ':')))
     except OSError:
         kodi_notify('Advanced MAME Launcher',
                     'Cannot write {} file (OSError)'.format(json_filename))
@@ -104,7 +104,7 @@ def fs_write_JSON_file(json_filename, json_data, verbose = True):
     l_end = time.time()
     if verbose:
         write_time_s = l_end - l_start
-        print('fs_write_JSON_file() Writing time {0:f} s'.format(write_time_s))
+        print('fs_write_JSON_file() Writing time {:f} s'.format(write_time_s))
 
 # --- Load catver.ini ----------------------------------------------------------------------------
 # Copy this function from AML source code.
@@ -233,10 +233,9 @@ print('mame_load_nplayers_ini() single_category    {}'.format(nplayers_dic['sing
 # Do not load whole MAME XML into memory! Use an iterative parser to
 # grab only the information we want and discard the rest.
 # See http://effbot.org/zone/element-iterparse.htm [1]
-__debug_MAME_XML_parser = 0
-context = xml.etree.ElementTree.iterparse(MAME_XML_filename, events=("start", "end"))
-context = iter(context)
-event, root = context.next()
+__debug_MAME_XML_parser = False
+xml_iter = xml.etree.ElementTree.iterparse(MAME_XML_filename, events=("start", "end"))
+event, root = next(xml_iter)
 mame_version_str = 'MAME ' + root.attrib['build']
 print('MAME version is "{}"'.format(mame_version_str))
 
@@ -256,11 +255,10 @@ machine_name = ''
 num_iteration = 0
 num_machines = 0
 print('Reading MAME XML file ...')
-for event, elem in context:
-    # --- Debug the elements we are iterating from the XML file ---
-    # print('Event     {0:6s} | Elem.tag    "{1}"'.format(event, elem.tag))
-    # print('                   Elem.text   "{0}"'.format(elem.text))
-    # print('                   Elem.attrib "{0}"'.format(elem.attrib))
+for event, elem in xml_iter:
+    # Debug the elements we are iterating from the XML file
+    # print('event "{}"'.format(event))
+    # print('elem.tag "{}" | elem.text "{}" | elem.attrib "{}"'.format(elem.tag, elem.text, str(elem.attrib)))
 
     # Get MAME version
     if event == "start" and elem.tag == "machine":
@@ -302,10 +300,10 @@ for event, elem in context:
         description = elem.text if elem.text is not None else 'Python None'
         machine['description'] = description
         if __debug_MAME_XML_parser:
-            print('     description {}'.format(desc_str))
+            print('     description {}'.format(description))
 
     elif event == "start" and elem.tag == "year":
-        machine['year'] = unicode(elem.text)
+        machine['year'] = str(elem.text)
         if __debug_MAME_XML_parser:
             print('            year {}'.format(machine['year']))
 
@@ -363,8 +361,8 @@ for key in sorted(machines):
 o_sl.append('</menu>')
 
 print('Writing file "{}"'.format(output_filename))
-with open(output_filename, 'w') as file:
-    file.write('\n'.join(o_sl).encode('utf-8'))
+with open(output_filename, 'w', encoding='utf-8') as file:
+    file.write('\n'.join(o_sl))
 
 print('Writing file "{}"'.format(output_filename_BIOS))
 fs_write_JSON_file(output_filename_BIOS, list(sorted(BIOS_set)))
